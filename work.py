@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup as bs # webscrape
 import requests # websites
 import codecs # files
-import pandas as pd # excel sheets
+# import pandas as pd # excel sheets
 
 # request website
 # page = requests.get("http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid=83813&cite_number=1306-25673")
@@ -30,6 +30,14 @@ def entry_data():
     amnt_clean = amnt_tot.split()[2]
     data.append(amnt_clean)
 
+    f3 = codecs.open("citemgr_ex1_detail.html")
+    soup3 = bs(f3.read(), "html.parser")
+
+    state = soup3.find_all("input")
+    for i in state:
+        if i.get("name") == "license_state":
+            data.append(i.get("value"))
+
     return data
 
 def init_excel():
@@ -41,7 +49,8 @@ def init_excel():
         "Registered Owner": [],
         "Status": [],
         "Violation": [],
-        "Amount": []
+        "Amount": [],
+        "State":[]
         }
     
     return sheet
@@ -58,6 +67,7 @@ def excel_input():
     sheet["Status"].append(data[6])
     sheet["Violation"].append(data[7])
     sheet["Amount"].append(data[8])
+    sheet["State"].append(data[9])
 
     return sheet
 
@@ -110,8 +120,10 @@ def entry_data_mod():
 
 if __name__ == "__main__":
     # export_excel(entry_data_mod(), "data_mult.csv")
+    print(excel_input())
     # entry_data()
-    export_excel(excel_input(), "data_single.csv")
+    # pass
+    # export_excel(excel_input(), "data_single.csv")
     # print(entry_data_mod())
     # entry_data_mod()
     
