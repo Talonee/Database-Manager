@@ -20,9 +20,18 @@ def entry_data():
     soup2 = bs(f2.read(), "html.parser")
 
     violation = []
-    viol_number = soup2.find("td", class_="tblpcs").get_text().split()[0]
+    viol_number = soup2.find("td", class_="tblpcs").get_text().split()[0][1]
     violation.append(viol_number)
-    data.append(violation)
+    viol_clean = ""
+    for i in violation:
+        viol_clean += ", {}".format(i)
+    viol_clean = "#" + viol_clean[2:]
+    data.append(viol_clean)
+
+    amount = 0
+    amnt_tot = soup2.find_all("td", class_="menuheader", bgcolor="#8B6914")[0].get_text()
+    amnt_clean = amnt_tot.split()[2]
+    data.append(amnt_clean)
 
     return data
 
@@ -51,6 +60,7 @@ def excel_input():
     sheet["Registered Owner"].append(data[4])
     sheet["Status"].append(data[6])
     sheet["Violation"].append(data[7])
+    sheet["Amount"].append(data[8])
 
     return sheet
 
@@ -102,7 +112,9 @@ def entry_data_mod():
 
 
 if __name__ == "__main__":
-    export_excel(entry_data_mod(), "data_mult.csv")
+    # export_excel(entry_data_mod(), "data_mult.csv")
+    # entry_data()
+    export_excel(excel_input(), "data_single.csv")
     # print(entry_data_mod())
     # entry_data_mod()
     
