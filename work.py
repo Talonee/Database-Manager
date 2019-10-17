@@ -59,6 +59,11 @@ def entry_data_mod():
         page = requests.get(url)
         soup2 = bs(page.content, "html.parser")
 
+        state = soup2.find_all("input")
+        for i in state:
+            if i.get("name") == "license_state":
+                sheet["State"].append(i.get("value"))
+
 
     #---------------------------------------------------------
     # f2 = codecs.open("citemgr_ex1_transaction.html")
