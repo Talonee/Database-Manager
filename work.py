@@ -22,10 +22,7 @@ def entry_data():
     violation = []
     viol_number = soup2.find("td", class_="tblpcs").get_text().split()[0][1]
     violation.append(viol_number)
-    viol_clean = ""
-    for i in violation:
-        viol_clean += ", {}".format(i)
-    viol_clean = "#" + viol_clean[2:]
+    viol_clean = "#" + ",".join(violation)
     data.append(viol_clean)
 
     amount = 0
