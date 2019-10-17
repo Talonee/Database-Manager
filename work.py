@@ -82,6 +82,17 @@ def entry_data_mod():
         page = requests.get(url)
         soup2 = bs(page.content, "html.parser")
 
+        violation = []
+        for i in soup2.find_all("td", class_="tblpcs"):
+            violation.append(i.get_text())
+        viol_clean = "#" + ",".join(violation)
+        sheet["Violation"].append(viol_clean)
+
+        # amount = 0
+        # amnt_tot = soup2.find_all("td", class_="menuheader", bgcolor="#8B6914")[0].get_text()
+        # amnt_clean = amnt_tot.split()[2]
+        # data.append(amnt_clean)
+
         
 
 
