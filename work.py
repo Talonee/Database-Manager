@@ -35,7 +35,7 @@ def entry_data_mod():
     for i in soup.find_all("td", class_="tblkeypcs"): # Cite ID
         sheet["Cite ID"].append(i.a.get_text())
 
-    for i in soup.find_all("td", class_="tblpcs"): # cite#, date, license, owner, status
+    for i in soup.find_all("td", class_="tblpcs"): # Citation, date, license, owner, status
         if column == 6:
             column = 0
 
@@ -54,7 +54,7 @@ def entry_data_mod():
 
         column += 1
     
-    for i in sheet["Cite ID"]:
+    for i in sheet["Cite ID"]: # State (web)
         url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(i)
         page = requests.get(url)
         soup2 = bs(page.content, "html.parser")
@@ -63,7 +63,6 @@ def entry_data_mod():
         for i in state:
             if i.get("name") == "license_state":
                 sheet["State"].append(i.get("value"))
-
 
     #---------------------------------------------------------
     # f2 = codecs.open("citemgr_ex1_transaction.html")
@@ -76,6 +75,15 @@ def entry_data_mod():
 
     # for i in sheet:
     #     print("{}: {}".format(i, len(sheet[i])))
+
+    for c, value in enumerate(sheet["Cite ID"]): # Amount, violation (web)
+        cite_number = sheet["Cite Number"][c]
+        url = "http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid={}&cite_number={}".format(value, cite_number)
+        page = requests.get(url)
+        soup2 = bs(page.content, "html.parser")
+
+        
+
 
     return sheet
 
