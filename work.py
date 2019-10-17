@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup as bs # webscrape
 import requests # websites
 import codecs # files
-import pandas as pd # excel sheets
+# import pandas as pd # excel sheets
 
 # request website
 # page = requests.get("http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid=83813&cite_number=1306-25673")
@@ -102,7 +102,7 @@ def entry_data_mod():
 
 
 if __name__ == "__main__":
-    export_excel(entry_data_mod(), "data_mult.csv")
-    # print(entry_data_mod())
+    # export_excel(entry_data_mod(), "data_mult.csv")
+    print(entry_data_mod())
     # entry_data_mod()
     
