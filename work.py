@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 from bs4 import BeautifulSoup as bs  # webscrape
 import requests  # websites
 import codecs  # files
 import pandas as pd  # excel sheets
-=======
-from bs4 import BeautifulSoup as bs # webscrape
-import requests # websites
-import codecs # files
-# import pandas as pd # excel sheets
->>>>>>> 983e72fde011a5ff9ffbe08f45f12966913a2b3b
 
 # request website
 # page = requests.get("http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid=83813&cite_number=1306-25673")
