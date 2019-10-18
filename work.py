@@ -7,7 +7,7 @@ import time
 # request website
 # page = requests.get("http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid=83813&cite_number=1306-25673")
 
-
+# make database and web return all columns then create a single fxn to put in sheet at once
 sheet = {
     "Cite ID": [],
     "Cite Number": [],
