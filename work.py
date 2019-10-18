@@ -89,7 +89,7 @@ def entry_data_mod():
         # page = requests.get(url)
         # soup2 = bs(page.content, "html.parser")
 
-        f2 = codecs.open("citemgr_ex1_transaction.html")
+        f2 = codecs.open("citemgr_ex1_detail.html")
         soup2 = bs(f2.read(), "html.parser")
 
         state = soup2.find_all("input")
