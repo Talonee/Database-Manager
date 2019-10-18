@@ -36,7 +36,7 @@ def export_excel(table, name):
 
 
 def entry_data_mod():
-    f = codecs.open("citemgr_2013_small.html", "r", "utf-8")
+    f = codecs.open("citemgr_2013.html", "r", "utf-8")
     soup = bs(f.read(), "html.parser")
 
     sheet = init_excel()
@@ -89,7 +89,7 @@ def entry_data_mod():
         # page = requests.get(url)
         # soup2 = bs(page.content, "html.parser")
 
-        f2 = codecs.open("citemgr_ex1_transaction.html")
+        f2 = codecs.open("citemgr_ex1_detail.html")
         soup2 = bs(f2.read(), "html.parser")
 
         state = soup2.find_all("input")
@@ -97,9 +97,9 @@ def entry_data_mod():
             if i.get("name") == "license_state":
                 sheet["State"].append(i.get("value"))
 
-    for c, value in enumerate(sheet["Cite ID"]):  # Amount, violation (web)
-        cite_number = sheet["Cite Number"][c]
-        # url = "http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid={}&cite_number={}".format(value, cite_number)
+    for id in sheet["Cite ID"]:  # Amount, violation (web)
+        num = sheet["Cite Number"][sheet["Cite ID"].index(id)]
+        # url = "http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid={}&cite_number={}".format(id, num)
         # page = requests.get(url)
         # soup2 = bs(page.content, "html.parser")
 
@@ -120,6 +120,7 @@ def entry_data_mod():
                                 bgcolor="#8B6914").get_text()
         amnt_clean = "{}".format(amount.split()[2])
         sheet["Amount"].append(amnt_clean)
+
 
     return sheet
 
