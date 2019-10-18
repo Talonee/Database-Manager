@@ -97,18 +97,6 @@ def entry_data_mod():
             if i.get("name") == "license_state":
                 sheet["State"].append(i.get("value"))
 
-    #---------------------------------------------------------
-    # f2 = codecs.open("citemgr_ex1_transaction.html")
-    # soup2 = bs(f2.read(), "html.parser")
-
-    # violation = []
-    # viol_number = soup2.find("td", class_="tblpcs").get_text().split()[0]
-    # violation.append(viol_number)
-    # data.append(violation)
-
-    # for i in sheet:
-    #     print("{}: {}".format(i, len(sheet[i])))
-
     for c, value in enumerate(sheet["Cite ID"]):  # Amount, violation (web)
         cite_number = sheet["Cite Number"][c]
         # url = "http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid={}&cite_number={}".format(value, cite_number)
@@ -128,10 +116,9 @@ def entry_data_mod():
         viol_clean = "#" + ",".join(violation)
         sheet["Violation"].append(viol_clean)
 
-        amount = soup2.find_all("td", class_="menuheader",
-                                bgcolor="#8B6914")[0].get_text()
-        amnt_clean = "{}.{}".format(amount.split()[2].split(".")[0],
-                                    sheet["Status"][c])
+        amount = soup2.find("td", class_="menuheader",
+                                bgcolor="#8B6914").get_text()
+        amnt_clean = "{}".format(amount.split()[2])
         sheet["Amount"].append(amnt_clean)
 
     return sheet
