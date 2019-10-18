@@ -3,27 +3,25 @@ import requests  # websites
 import codecs  # files
 import pandas as pd  # excel sheets
 
+import time
 # request website
 # page = requests.get("http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid=83813&cite_number=1306-25673")
 
 
-def init_excel():
-    sheet = {
-        "Cite ID": [],
-        "Cite Number": [],
-        "Date Issued": [],
-        "License Number": [],
-        "Full Name": [],
-        "Status": [],
-        "Violation": [],
-        "Amount": [],
-        "State": [],
-        "First": [],
-        "Middle": [],
-        "Last": []
-    }
-
-    return sheet
+sheet = {
+    "Cite ID": [],
+    "Cite Number": [],
+    "Date Issued": [],
+    "License Number": [],
+    "Full Name": [],
+    "Status": [],
+    "Violation": [],
+    "Amount": [],
+    "State": [],
+    "First": [],
+    "Middle": [],
+    "Last": []
+}
 
 
 def export_excel(table, name):
@@ -35,15 +33,12 @@ def export_excel(table, name):
     export_csv = df.to_csv(name, index=False)
 
 
-def entry_data_mod():
+def database():
     f = codecs.open("citemgr_2013.html", "r", "utf-8")
     soup = bs(f.read(), "html.parser")
-
-    sheet = init_excel()
     column = 0
 
-    for i in soup.find_all("td", class_="tblkeypcs"):  # Cite ID
-        sheet["Cite ID"].append(i.a.get_text())
+    [sheet["Cite ID"].append(i.a.get_text()) for i in soup.find_all("td", class_="tblkeypcs")] # Cite ID
 
     for i in soup.find_all(
             "td", class_="tblpcs"):  # Citation, date, license, name, status
@@ -84,6 +79,11 @@ def entry_data_mod():
 
         column += 1
 
+    return sheet
+
+def web():
+    sheet = init_excel()
+
     for i in sheet["Cite ID"]:  # State (web)
         # url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(i)
         # page = requests.get(url)
@@ -98,11 +98,51 @@ def entry_data_mod():
                 sheet["State"].append(i.get("value"))
 
     for id in sheet["Cite ID"]:  # Amount, violation (web)
-        num = sheet["Cite Number"][sheet["Cite ID"].index(id)]
+        # num = sheet["Cite Number"][sheet["Cite ID"].index(id)]
         # url = "http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid={}&cite_number={}".format(id, num)
         # page = requests.get(url)
         # soup2 = bs(page.content, "html.parser")
 
+        f2 = codecs.open("citemgr_ex1_mult_trans.html", "r", "utf-8")
+        soup2 = bs(f2.read(), "html.parser")
+
+        violation = []
+        # for i in soup2.find_all("td",
+        #                         align="left",
+        #                         bgcolor="#eeeeee",
+        #                         class_="tblpcs"):
+        #     if "#" in i.get_text():
+        #         violation.append(i.get_text().split()[0][1:])
+        # viol_clean = "#" + ",".join(violation)
+        # sheet["Violation"].append(viol_clean)
+
+    
+        [violation.append(i.get_text().split()[0][1:]) if "#" in i.get_text() else "" for i in soup2.find_all("td",
+                                align="left",
+                                bgcolor="#eeeeee",
+                                class_="tblpcs")]
+        sheet["Violation"].append("#" + ",".join(violation))
+
+        # fx = (lambda x: x.get_text().split()[0][1:] if "#" in x.get_text() else None)
+        # violation = list(map(fx, soup2.find_all("td",
+        #                         align="left",
+        #                         bgcolor="#eeeeee",
+        #                         class_="tblpcs")))
+        # violation = [i for i in violation if i]
+        # sheet["Violation"].append("#" + ",".join(violation))
+
+
+        amount = soup2.find("td", class_="menuheader",
+                                bgcolor="#8B6914").get_text()
+        amnt_clean = "{}".format(amount.split()[2])
+        sheet["Amount"].append(amnt_clean)
+
+    return sheet
+
+
+def mod1(): # for loop
+
+    for id in sheet["Cite ID"]:  # Amount, violation (web)
         f2 = codecs.open("citemgr_ex1_mult_trans.html", "r", "utf-8")
         soup2 = bs(f2.read(), "html.parser")
 
@@ -116,16 +156,84 @@ def entry_data_mod():
         viol_clean = "#" + ",".join(violation)
         sheet["Violation"].append(viol_clean)
 
-        amount = soup2.find("td", class_="menuheader",
-                                bgcolor="#8B6914").get_text()
-        amnt_clean = "{}".format(amount.split()[2])
-        sheet["Amount"].append(amnt_clean)
+def mod2(): # List comprehension
 
+    for id in sheet["Cite ID"]:  # Amount, violation (web)
+        f2 = codecs.open("citemgr_ex1_mult_trans.html", "r", "utf-8")
+        soup2 = bs(f2.read(), "html.parser")
 
-    return sheet
+        violation = []
+        [violation.append(i.get_text().split()[0][1:]) if "#" in i.get_text() else "" for i in soup2.find_all("td",
+                                align="left",
+                                bgcolor="#eeeeee",
+                                class_="tblpcs")]
+        sheet["Violation"].append("#" + ",".join(violation))
+
+def mod3(): # Lambda map
+
+    for id in sheet["Cite ID"]:  # Amount, violation (web)
+        f2 = codecs.open("citemgr_ex1_mult_trans.html", "r", "utf-8")
+        soup2 = bs(f2.read(), "html.parser")
+
+        fx = (lambda x: x.get_text().split()[0][1:] if "#" in x.get_text() else None)
+        violation = list(map(fx, soup2.find_all("td",
+                                align="left",
+                                bgcolor="#eeeeee",
+                                class_="tblpcs")))
+        violation = [i for i in violation if i]
+        sheet["Violation"].append("#" + ",".join(violation))
+
+def mod4_init(): # generator    
+    for id in sheet["Cite ID"]:
+        f2 = codecs.open("citemgr_ex1_mult_trans.html", "r", "utf-8")
+        soup2 = bs(f2.read(), "html.parser")
+
+        for i in soup2.find_all("td",
+                                align="left",
+                                bgcolor="#eeeeee",
+                                class_="tblpcs"):
+            if "#" in i.get_text():
+                yield i.get_text().split()[0][1:]
+
+def mod4():
+    violation = []
+    [violation.append(i) for i in mod4_init()]
+    sheet["Violation"].append("#" + ",".join(violation))
 
 
 if __name__ == "__main__":
-    export_excel(entry_data_mod(), "data_mult.csv")
+    # export_excel(entry_data_mod(), "data_mult.csv")
+    # export_excel(entry_data_mod2(), "data_test.csv")
+
+    # export_excel(database(), "test.csv")
+    database()
+
+    start = time.time()
+    mod1()
+    print("For-loop: {}".format(time.time() - start))
+
+    start = time.time()
+    mod2()
+    print("List Comp: {}".format(time.time() - start))
+
+    start = time.time()
+    mod3()
+    print("LambdaMap: {}".format(time.time() - start))
+
+    start = time.time()
+    mod4()
+    print("Generator: {}".format(time.time() - start))
+
     # print(entry_data_mod())
     # entry_data_mod()
+
+    # result = []
+    # dank = ["#  ", "yuh#", "0", "abc"]
+    # fx = (lambda x: x if "#" in x else "")
+    # result = list(map(fx, dank))
+    # print(result)
+
+    # result = []
+    # dank = ["#  ", "yuh#", "0", "abc"]
+    # [result.append(x) if "#" in x else "" for x in dank]
+    # print(result)
