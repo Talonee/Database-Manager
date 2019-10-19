@@ -9,10 +9,10 @@ import pandas as pd  # excel sheets
 
 def export_excel(table, name):
     df = pd.DataFrame.from_dict(table, orient="index").transpose()
-    df = df[[
-        "Cite ID", "Citation", "Date", "Plate", "State", "Full Name", "First",
-        "Middle", "Last", "Violation", "Amount", "Status"
-    ]]
+    # df = df[[
+    #     "Cite ID", "Citation", "Date", "Plate", "State", "Full Name", "First",
+    #     "Middle", "Last", "Violation", "Amount", "Status"
+    # ]]
     export_csv = df.to_csv(name, index=False)
 
 
