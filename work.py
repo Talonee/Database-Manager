@@ -6,7 +6,6 @@ import pandas as pd  # excel sheets
 # request website
 # page = requests.get("http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid=83813&cite_number=1306-25673")
 
-
 def export_excel(table, name):
     df = pd.DataFrame.from_dict(table, orient="index").transpose()
     # df = df[[
@@ -85,20 +84,17 @@ def web():
     violation = []
     amount = []
 
-    for i in sheet["Cite ID"]:  # State (web)
-        # url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(i)
+    for id in sheet["Cite ID"]:  # State, amount, violation (web)
+        # url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(id)
         # page = requests.get(url)
         # soup2 = bs(page.content, "html.parser")
 
         f2 = codecs.open("citemgr_ex1_detail.html")
         soup2 = bs(f2.read(), "html.parser")
 
-        items = soup2.find_all("input")
-        for i in items:
-            if i.get("name") == "license_state":
-                state.append(i.get("value"))
+        items = soup2.find('input', {'name': 'license_state'}).get('value')
+        state.append(items)
 
-    for id in sheet["Cite ID"]:  # Amount, violation (web)
         # num = sheet["Cite Number"][sheet["Cite ID"].index(id)]
         # url = "http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid={}&cite_number={}".format(id, num)
         # page = requests.get(url)
@@ -119,7 +115,7 @@ def web():
                           bgcolor="#8B6914").get_text()
         amnt_clean = "{}".format(amnt.split()[2])
         amount.append(amnt_clean)
-
+        
     return state, violation, amount
 
 
@@ -141,5 +137,5 @@ if __name__ == "__main__":
 
     # export_excel(database(), "test.csv")
     # export_excel({**sheet1(), **sheet2()}, "data_mult.csv")
-    export_excel(sheet1(), "data_sheet1.csv")
-    # export_excel(sheet2(), "data_sheet2.csv")
+    # export_excel(sheet1(), "data_sheet1.csv")
+    export_excel(sheet2(), "data_sheet2.csv")
