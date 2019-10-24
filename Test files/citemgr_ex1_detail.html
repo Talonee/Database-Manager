@@ -1,0 +1,205 @@
+
+ 
+
+<HTML><HEAD><TITLE>VVC - Parking Citation Management</TITLE>
+<META content='text/html; charset=iso-8859-1' http-equiv=Content-Type>
+<LINK href='ionic.css' rel=stylesheet type=text/css>
+<script language='javascript'>
+parent.bottom.location.href = "frame_lower.php";
+</script>
+
+</HEAD>
+<STYLE type='text/css'> 
+BODY { background: url("");
+background-color: black;
+background-repeat: no-repeat; 
+background-attachment: fixed;
+scrollbar-base-color: blue;
+ }
+<BODY onblur="self.focus();">
+</STYLE> 
+
+<TABLE border=0 cellPadding=0 cellSpacing=0 height=400 width=740>
+  <TR><TD align=right width=720>
+
+<FORM name=edit action='cite_edit_submit.php' method=post>
+     <input type=hidden name=oldStatus value='Paid'>
+     <input type=hidden name=username value=''>
+     <input type=hidden name=cite_amountdue value='20.00'>
+     <input type=hidden name=cite_amountpaid value='20.00'>
+     <input type=hidden name=cite_balance value='0.00'>
+     <input type=hidden name=cite_id value=''>
+     <input type=hidden name=cite_sysid value='85732'>
+                  <TABLE border=0 cellPadding=1 cellSpacing=1 width=625 bgcolor=#EEEEEE>
+                    <TBODY>
+        		  <tr height=25>
+			  <td class=menuheader colspan=2 bgcolor=><b>Cite ID: 85732</b>
+			  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Cite Number:</td>
+			  <td align=left><input type=text name=cite_number size=10 maxlength=10 value='1310-02809'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Cite Date:</td>
+			  <td align=left><input type=text name=cite_date size=10 maxlength=10 value='2013-10-07'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Cite Time:</td>
+			  <td align=left><input type=text name=cite_time size=5 maxlength=5 value='11:39'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Cite Location:</td>
+			  <td align=left><input type=text name=cite_location size=30 maxlength=30 value='LOT 20'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Cite Officer:</td>
+			  <td align=left><input type=text name=cite_officer size=20 maxlength=20 value='GONZALES'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Citation Status:</td>
+          		  <td align=left>
+            		<select name=cite_status>
+<option>Active</option>
+<option>Appeal</option>
+<option selected>Paid</option>
+<option>Void</option>
+<option>Waived</option>
+<option>Warning</option>
+
+          			</select>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Cite Disposition:</td>
+			  <td align=left><input type=text name=cite_disposition size=10 maxlength=10 value='Processing'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Parking Permit:</td>
+			  <td align=left><input type=text name=ppermit_number size=10 maxlength=10 value=''>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>License Number:</td>
+			  <td align=left><input type=text name=license_number size=10 maxlength=10 value='6Y52592'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>License State:</td>
+			  <td align=left><input type=text name=license_state size=2 maxlength=2 value='CA'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Vehicle VIN:</td>
+			  <td align=left><input type=text name=vehicle_vin size=20 maxlength=30 value=''>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Vehicle Make:</td>
+			  <td align=left><input type=text name=vehicle_make size=15 maxlength=15 value='CHEVROLET'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Vehicle Model:</td>
+			  <td align=left><input type=text name=vehicle_model size=15 maxlength=15 value='S10'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Vehicle Body Type:</td>
+			  <td align=left><input type=text name=vehicle_bodytype size=15 maxlength=15 value=''>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Vehicle Color:</td>
+			  <td align=left><input type=text name=vehicle_color size=15 maxlength=15 value='GRAY'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Comments:</td>
+			  <td align=left><textarea class=menuitems name=cite_comment cols=70 rows=7></textarea>
+            	  </td></tr>
+			  <tr >
+            	  <td colspan=2 align=center class=menuheader bgcolor=>Driver Information</td>
+            	  </tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Driver Name:</td>
+			  <td align=left><input type=text name=driver_name size=40 maxlength=40 value='BELCHER'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Address:</td>
+			  <td align=left><input type=text name=driver_addr size=40 maxlength=40 value=''>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>CSZ:</td>
+			  <td align=left><input type=text name=driver_csz size=30 maxlength=30 value=''>
+            	  </td></tr>
+			  <tr>
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Phone:</td>
+			  <td align=left><input type=text name=driver_phone size=12 maxlength=12 value=''>
+            	  </td></tr>
+			  <tr >
+            	  <td colspan=2 align=center class=menuheader bgcolor=>Owner Information</td>
+            	  </tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Owner Name:</td>
+			  <td align=left><input type=text name=owner_name size=40 maxlength=40 value='BLECHER, BOBBY JR'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>CO-Owner:</td>
+			  <td align=left><input type=text name=owner_name2 size=40 maxlength=40 value='BELCHER, ADRIAN'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Address:</td>
+			  <td align=left><input type=text name=owner_addr size=40 maxlength=40 value='15013 DELAWARE STREET'>
+            	  </td></tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>CSZ:</td>
+			  <td align=left><input type=text name=owner_csz size=30 maxlength=30 value='ADELANTO, CA 92301'>
+            	  </td></tr>
+			  <tr>
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Phone:</td>
+			  <td align=left><input type=text name=owner_phone size=12 maxlength=12 value=''>
+            	  </td></tr>
+			  <tr >
+            	  <td colspan=2 align=center class=menuheader bgcolor=>Administrative Information</td>
+            	  </tr>
+			</TBODY>
+			</TABLE>
+                  <TABLE border=0 cellPadding=1 cellSpacing=1 width=625 bgcolor=#EEEEEE>
+                    <TBODY>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Cite Notice One:</td>
+			  <td align=left><input type=text name=cite_notice_one size=10 maxlength=10 value='2013-11-07'></td>
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Sent:</td>
+			  <td align=left><input type=text name=cite_notice_one_sent size=3 maxlength=3 value='No'></td>
+			  </tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>DMV Hold:</td>
+			  <td align=left><input type=text name=dmv_hold_date size=10 maxlength=10 value='2013-12-07'></td>
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Status:</td>
+			  <td align=left><input type=text name=dmv_hold_status size=3 maxlength=3 value='No'></td>
+			  </tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Bursar Hold:</td>
+			  <td align=left><input type=text name=bursar_hold_date size=10 maxlength=10 value='2013-12-07'></td>
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Status:</td>
+			  <td align=left><input type=text name=bursar_hold_status size=3 maxlength=3 value='No'></td>
+			  </tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>DMV Release:</td>
+			  <td align=left><input type=text name=dmv_release_date size=10 maxlength=10 value='0000-00-00'></td>
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Status:</td>
+			  <td align=left><input type=text name=dmv_release_status size=3 maxlength=3 value='No'></td>
+			  </tr>
+			  <tr >
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Bursar Release:</td>
+			  <td align=left><input type=text name=bursar_release_date size=10 maxlength=10 value='0000-00-00'></td>
+            	  <td align=right class=menuitems bgcolor=#EEEEEE>Status:</td>
+			  <td align=left><input type=text name=bursar_release_status size=3 maxlength=3 value='No'></td>
+			  </tr>
+
+
+          		  <tr > 
+            	  <td colspan=4 bgcolor= height=30><center>
+                    <input class=menuitems type=submit value='Edit' name=submit>
+                    <input class=menuitems type=button value='Transactions' name=violation onClick=" window.open('violation_trans_main.php?cite_array=&cite_sysid=85732&cite_number=1310-02809','notes',config='location=no,scrollbars=yes,width=780,height=440') ">
+                    <input class=menuitems type=button value='Final Notice' name=violation onClick=" window.open('final_notice.php?cite_sysid=85732','notes',config='location=no,scrollbars=yes,width=780,height=440') ">
+                    <input class=menuitems type=button value='View History' name=history onClick=" window.open('history_main.php?cite_number=1310-02809','notes',config='location=no,scrollbars=yes,width=780,height=440') ">
+                    <input class=menuitems type=button value=Exit onClick="window.location='cite_list.php'"></center>
+	              </td></tr>
+			</TBODY>
+			</TABLE>
+</TD></TR>
+</TABLE>
+</FORM>
+</BODY></HTML>

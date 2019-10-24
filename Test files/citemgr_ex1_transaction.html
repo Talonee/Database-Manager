@@ -1,0 +1,53 @@
+
+ 
+
+<HTML><HEAD><TITLE>VVC - Parking Citation Management</TITLE>
+<META content='text/html; charset=iso-8859-1' http-equiv=Content-Type>
+<LINK href='ionic.css' rel=stylesheet type=text/css>
+<script language='javascript'>
+parent.bottom.location.href = "frame_lower.php";
+</script>
+
+</HEAD>
+<STYLE type='text/css'> 
+BODY { background: url("");
+background-color: black;
+background-repeat: no-repeat; 
+background-attachment: fixed;
+scrollbar-base-color: blue;
+ }
+<BODY onblur="self.focus();">
+</STYLE> 
+
+<TABLE border=0 cellPadding=0 cellSpacing=0 height=400 width=740>
+  <TR><TD align=right width=720>
+
+
+                  <TABLE border=0 cellPadding=2 cellSpacing=1 width=635 bgcolor=#eeeeee>
+                    <TBODY>
+			  <tr><td colspan=3 bgcolor= height=20 align=center class=menuheader >
+                		Citation Transaction Module<br>Cite ID: 85732<br>Cite Number: 1310-02809
+	              </td></tr>
+			  <tr><td colspan=3 height=5 bgcolor=#bebebe></td></tr><tr bgcolor=#8B6914><td align=center class=menuheader ><b>ID</td><td align=left class=menuheader ><b>List of Violations</td><td align=right class=menuheader ><b>Amount</td></tr>
+<tr>
+<td align=center bgcolor=#eeeeee class=tblkeypcs><a href=violation_trans_edit.php?id=217564&cite_number=1310-02809 onClick=" window.location='violation_trans_edit.php?id=217564&cite_number=1310-02809'">217564</a></td>
+<td align=left bgcolor=#eeeeee class=tblpcs>#1 NO VALID PARKING PERMIT DISPLAYED</td><td align=right bgcolor=#eeeeee class=tblpcs>20.00</td></tr>  <tr><td colspan=3 bgcolor=#8B6914 height=15 align=right class=menuheader>Violation Total: $20.00</td></tr>
+			  <tr><td colspan=3 height=5 bgcolor=#bebebe></td></tr>
+<tr bgcolor=#2F4F4F><td align=center class=menuheader ><b>Date</td><td align=left class=menuheader ><b>List of Payments</td><td align=right class=menuheader ><b>Amount</td></tr>
+<tr>
+<td align=center bgcolor=#eeeeee class=tblkeypcs><a href=payment_trans_edit.php?id=218816&cite_sysid=85732&cite_number=1310-02809 onClick=" window.location='payment_trans_edit.php?id=218816&cite_sysid=85732&cite_number=1310-02809'">2013-11-01</a></td>
+<td align=left bgcolor=#eeeeee class=tblpcs>BELCHER</td><td align=right bgcolor=#eeeeee class=tblpcs>20.00</td></tr><tr><td colspan=3 bgcolor=#2F4F4F height=15 align=right class=menuheader>Payment Total: $20.00</td></tr>
+
+			  <tr><td colspan=3 height=5 bgcolor=#bebebe></td></tr>
+
+			  <tr><td colspan=3 bgcolor= height=30 align=center>
+                		<input class=menuitems type=button value=' Add Violation' onClick="window.location='violation_trans_add.php?id=0&cite_sysid=85732'">
+                		<input class=menuitems type=button value=' Add Payment' onClick="window.location='payment_trans_edit.php?id=0&cite_sysid=85732'">
+                		<input class=menuitems type=button value='Cancel' onClick=window.close()>
+	              </td></tr>
+			  </TBODY>
+			</TABLE>
+
+</TD></TR>
+</TABLE>
+</BODY></HTML>

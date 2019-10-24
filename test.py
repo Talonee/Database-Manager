@@ -7,7 +7,7 @@ import time
 
 
 def database():
-    f = codecs.open("citemgr_2013.html", "r", "utf-8")
+    f = codecs.open("Years/citemgr_2013.html", "r", "utf-8")
     soup = bs(f.read(), "html.parser")
     column = 0
     cite_id = []
@@ -74,28 +74,22 @@ def web():
     sheet["Cite ID"], sheet["Citation"], sheet["Date"], sheet["Plate"], sheet[
         "Full Name"], sheet["First"], sheet["Middle"], sheet["Last"], sheet[
             "Status"] = database()
-    state = []
-    violation = []
-    amount = []
+    sheet["State"] = []
+    sheet["Violation"] = []
+    sheet["Amount"] = []
 
     for id in sheet["Cite ID"]:  # State, amount, violation (web)
         url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(id)
         page = requests.get(url)
         soup2 = bs(page.content, "html.parser")
 
-        # f2 = codecs.open("citemgr_ex1_detail.html")
-        # soup2 = bs(f2.read(), "html.parser")
-
         items = soup2.find('input', {'name': 'license_state'}).get('value')
-        state.append(items)
+        sheet["State"].append(items)
 
         num = sheet["Citation"][sheet["Cite ID"].index(id)]
         url = "http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid={}&cite_number={}".format(id, num)
         page = requests.get(url)
         soup2 = bs(page.content, "html.parser")
-
-        # f2 = codecs.open("citemgr_ex1_mult_trans.html", "r", "utf-8")
-        # soup2 = bs(f2.read(), "html.parser")
 
         num = []
         [
@@ -103,48 +97,28 @@ def web():
             if "#" in i.get_text() else "" for i in soup2.find_all(
                 "td", align="left", bgcolor="#eeeeee", class_="tblpcs")
         ]
-        violation.append("#" + ",".join(num))
+        sheet["Violation"].append("#" + ",".join(num))
 
         amnt = soup2.find("td", class_="menuheader",
                           bgcolor="#8B6914").get_text()
         amnt_clean = "{}".format(amnt.split()[2])
-        amount.append(amnt_clean)
+        sheet["Amount"].append(amnt_clean)
         
-    return sheet["Cite ID"], sheet["Citation"], sheet["Date"], sheet["Plate"], sheet[
-        "Full Name"], sheet["First"], sheet["Middle"], sheet["Last"], sheet[
-            "Status"], state, violation, amount
-
-
-# def sheet1():
-    sheet = {}
-    sheet["Cite ID"], sheet["Citation"], sheet["Date"], sheet["Plate"], sheet[
-        "Full Name"], sheet["First"], sheet["Middle"], sheet["Last"], sheet[
-            "Status"] = database()
     return sheet
 
 
-def sheet2():
-    sheet = {}
-    sheet["Cite ID"], sheet["Citation"], sheet["Date"], sheet["Plate"], sheet[
-        "Full Name"], sheet["First"], sheet["Middle"], sheet["Last"], sheet[
-            "Status"], sheet["State"], sheet["Violation"], sheet["Amount"] = web()
-    return sheet
-
-def export_csv(table, name):
-    with open(name,'w') as f:
-        w = csv.writer(f)
-        w.writerow(table.keys())
-        w.writerow(table.values())
+def export_excel(table, name):
+    df = pd.DataFrame.from_dict(table, orient="index").transpose()
+    df = df[[
+        "Cite ID", "Citation", "Date", "Plate", "State", "Full Name", "First",
+        "Middle", "Last", "Violation", "Amount", "Status"
+    ]]
+    export_csv = df.to_csv(name, index=False)
 
 
 if __name__ == "__main__":
-
-    # export_excel(database(), "test.csv")
     # export_excel({**sheet1(), **sheet2()}, "data_mult.csv")
-    # export_excel(sheet1(), "data_sheet1.csv")
-    # export_excel(sheet2(), "data_sheet2.csv")
-    # export_csv(sheet2(), "example_2.csv")
     
     start = time.time()
-    export_csv(sheet2(), "final.csv")
+    export_excel(web(), "Copy of 2011.csv")
     print("Time: {}".format(time.time()-start))
