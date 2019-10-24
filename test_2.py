@@ -1,45 +1,59 @@
 from bs4 import BeautifulSoup as bs  # webscrape
 import requests  # websites
-import codecs  # files
 import pandas as pd  # excel sheets
 import csv # pandas alt
 import time
+import numpy as np
 
 
 def database():
-    f = codecs.open("Years/citemgr_2013.html", "r", "utf-8")
-    soup = bs(f.read(), "html.parser")
-    column = 0
-    cite_id = []
-    citation = []
-    date = []
-    plate = []
-    full_name = []
-    first = []
-    middle = []
-    last = []
-    status = []
+    with open("Years/citemgr_2013.html", buffering=(2<<16) + 8) as f:
+        soup = bs(f.read(), "html.parser")
+        cite_id = []
+        citation = []
+        date = []
+        plate = []
+        full_name = []
+        first = []
+        middle = []
+        last = []
+        status = []
 
-    [
-        cite_id.append(i.a.get_text())
-        for i in soup.find_all("td", class_="tblkeypcs")
-    ]  # Cite ID
+        [
+            cite_id.append(i.a.text)
+            for i in soup.find_all("td", {"class":"tblkeypcs", "width":"65", "align":"center"})
+        ]  # Cite ID
 
-    for i in soup.find_all(
-            "td", class_="tblpcs"):  # Citation, date, plate, name*3, status
-        if column == 6:
-            column = 0
+        [
+            citation.append(i.text)
+            for i in soup.find_all("td", {"align":"center", "width":"80", "class":"tblpcs"})
+        ] # Citation
 
-        if column == 0:
-            citation.append(i.get_text())
-        elif column == 1:
-            date.append(i.get_text())
-        elif column == 2:
-            plate.append(i.get_text())
-        elif column == 3:
-            full_name.append(i.get_text())
-            if i.get_text() != "":  # if result is not empty
-                name = i.get_text().replace(",", " ")
+        [
+            date.append(i.text)
+            for i in soup.find_all("td", {"align":"center", "width":"95", "class":"tblpcs"})
+        ] # Date
+        
+        [
+            plate.append(i.text)
+            for i in soup.find_all("td", {"align":"center", "width":"85", "class":"tblpcs"})
+        ] # Plate
+
+        [
+            full_name.append(i.text)
+            for i in soup.find_all("td", {"align":"left", "class":"tblpcs"})
+        ] # Full name
+
+        # Status
+        c = 0
+        for i in soup.find_all("td", {"align":"right", "width":"65", "class":"tblpcs"}):
+            if c % 2 == 1:
+                status.append(i.text)
+            c += 1
+
+        for i in full_name:
+            if i != "":  # if result is not empty
+                name = i.replace(",", " ")
                 name = name.split()
                 try:  # check for first + middle names
                     f_m = " ".join(name[1:]).split()
@@ -57,14 +71,6 @@ def database():
                 first.append("")
                 middle.append("")
                 last.append("")
-        elif column == 4:
-            pass
-        elif column == 5:
-            status.append(i.get_text())
-
-        column += 1
-
-    f.close()
 
     return cite_id, citation, date, plate, full_name, first, middle, last, status
 
