@@ -7,7 +7,7 @@ import numpy as np
 
 
 def database():
-    with open("Years/citemgr_2013.html", buffering=(2<<16) + 8) as f:
+    with open("Years/citemgr_2009.html", buffering=(2<<16) + 8) as f:
         soup = bs(f.read(), "html.parser")
         cite_id = []
         citation = []
@@ -126,5 +126,5 @@ if __name__ == "__main__":
     # export_excel({**sheet1(), **sheet2()}, "data_mult.csv")
     
     start = time.time()
-    export_excel(web(), "Copy of 2011.csv")
+    export_excel(web(), "Copy of 2009.csv")
     print("Time: {}".format(time.time()-start))
