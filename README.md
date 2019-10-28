@@ -1,6 +1,25 @@
 # Database-Webscrape
 
-The program's purposes:
-* Perform webscraping on an old database and retrieve necessary data from various internal websites.
+The project is currently **in progress** and is expected to have three (3) components, each performing separate functions: extract, input, and analyze.
+
+## Extract 
+File: `extract.py`
+
+This program's purpose(s):
+* Perform webscraping on an old database and retrieve relevant data from various internal websites.
 * Clean and organize data into different categories.
 * Export data into CSV files to be used in Excel.
+
+## Input
+File: `input.py`
+
+This program's purpose(s):
+* Read CSV files and enter relevant data into a website database's input fields.
+
+## Analyze
+File: `analyze.py`
+
+This program's purpose(s):
+* Create graphs and models with respect to data retrieved from **Extract**.
+* Determine diffferent statistical information within the data.
+* Analyze and predict data trends.
