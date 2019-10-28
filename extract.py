@@ -1,13 +1,11 @@
 from bs4 import BeautifulSoup as bs  # webscrape
 import requests  # websites
 import pandas as pd  # excel sheets
-import csv # pandas alt
 import time
-import numpy as np
 
 
 def database():
-    with open("Years/citemgr_2009.html", buffering=(2<<16) + 8) as f:
+    with open("Years/citemgr_2002.html", buffering=(2<<16) + 8) as f:
         soup = bs(f.read(), "html.parser")
         cite_id = []
         citation = []
@@ -122,9 +120,7 @@ def export_excel(table, name):
     export_csv = df.to_csv(name, index=False)
 
 
-if __name__ == "__main__":
-    # export_excel({**sheet1(), **sheet2()}, "data_mult.csv")
-    
+if __name__ == "__main__":    
     start = time.time()
-    export_excel(web(), "Copy of 2009.csv")
+    export_excel(web(), "Copy of 2002.csv")
     print("Time: {}".format(time.time()-start))
