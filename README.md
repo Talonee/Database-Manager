@@ -6,7 +6,7 @@ The project is currently **in progress** and is expected to have three (3) compo
 File: `extract.py`
 
 This program's purpose(s):
-* Perform webscraping on an old database and retrieve relevant data from various internal websites.
+* Perform web scraping on an old database and retrieve relevant data from various internal websites.
 * Clean and organize data into different categories.
 * Export data into CSV files to be used in Excel.
 
@@ -20,6 +20,6 @@ This program's purpose(s):
 File: `analyze.py`
 
 This program's purpose(s):
-* Create graphs and models with respect to data retrieved from **Extract**.
-* Determine diffferent statistical information within the data.
+* Create graphs and models concerning data retrieved from **Extract**.
+* Determine various statistical information within the data.
 * Analyze and predict data trends.
