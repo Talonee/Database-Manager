@@ -5,7 +5,7 @@ import time
 
 
 def database():
-    with open("Years/citemgr_2002.html", buffering=(2<<16) + 8) as f:
+    with open("Years/citemgr_1999.html", buffering=(2<<16) + 8) as f:
         soup = bs(f.read(), "html.parser")
         cite_id = []
         citation = []
@@ -122,5 +122,5 @@ def export_excel(table, name):
 
 if __name__ == "__main__":    
     start = time.time()
-    export_excel(web(), "Copy of 2002.csv")
+    export_excel(web(), "Copy of 1999.csv")
     print("Time: {}".format(time.time()-start))
