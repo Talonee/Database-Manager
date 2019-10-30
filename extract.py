@@ -112,15 +112,50 @@ def web():
 
 
 def export_excel(table, name):
-    df = pd.DataFrame.from_dict(table, orient="index").transpose()
+    if isinstance(table, pd.DataFrame):
+        df = table
+    else:
+        df = pd.DataFrame.from_dict(table, orient="index").transpose()
+
     df = df[[
         "Cite ID", "Citation", "Date", "Plate", "State", "Full Name", "First",
-        "Middle", "Last", "Violation", "Amount", "Status"
+        "Middle", "Last", "Violation", "Amount", "Status", "Vehicle Make", 
+        "Vehicle Model", "Vehicle Color"
     ]]
     export_csv = df.to_csv(name, index=False)
 
 
+def vehicle_desc():
+    df = pd.read_csv("Output/Copy of 2013.csv")
+    make = []
+    model = []
+    color = []
+
+    for i in df["Cite ID"]:
+        url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(i)
+        page = requests.get(url)
+        soup2 = bs(page.content, "html.parser")
+
+        item1 = soup2.find('input', {'name': 'vehicle_make'}).get('value')
+        make.append(item1)
+
+        item2 = soup2.find('input', {'name': 'vehicle_model'}).get('value')
+        model.append(item2)
+
+        item3 = soup2.find('input', {'name': 'vehicle_color'}).get('value')
+        color.append(item3)
+
+    df["Vehicle Make"] = make
+    df["Vehicle Model"] = model
+    df["Vehicle Color"] = color
+    
+    return df
+
 if __name__ == "__main__":    
+    # start = time.time()
+    # export_excel(web(), "Copy of 1999.csv")
+    # print("Time: {}".format(time.time()-start))
     start = time.time()
-    export_excel(web(), "Copy of 1999.csv")
+    export_excel(vehicle_desc(), "Copy of 2013 DATA.csv")
     print("Time: {}".format(time.time()-start))
+    
