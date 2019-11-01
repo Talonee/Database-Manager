@@ -208,15 +208,15 @@ def clean():
         output = "Output v4/Copy of 20{} DATA.csv".format(yr)
 
         csv = pd.read_csv(input)
-        dank = csv.shape[0]
-        for i in range(dank):
+        i = 0
+        while i < csv.shape[0]:
             # print(csv["Full Name"].iloc[i])
             # print(csv["Status"].iloc[i])
             # print(csv["Plate"].iloc[i])
             if not str(csv["Full Name"].iloc[i]) or str(csv["Full Name"].iloc[i]).lower() == "void" or str(csv["Status"].iloc[i]).lower() == "void" or not str(csv["Plate"].iloc[i]):
                 csv = csv.drop(index = i)
-                i = i - 1
-                dank = dank - 1
+            else:
+                i = i + 1
 
         export_excel(csv, output)
 
