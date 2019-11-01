@@ -113,22 +113,6 @@ def web():
     return sheet
 
 
-def export_excel(table, name):
-    if isinstance(table, pd.DataFrame):
-        df = table
-    else:
-        df = pd.DataFrame.from_dict(table, orient="index").transpose()
-
-    df = df[[
-        'Cite ID', 'Citation', 'Date', 'Plate', 'State', 'Full Name', 'First',
-       'Middle', 'Last', 'Violation', 'Amount', 'Status', 'Vehicle Make',
-       'Vehicle Model', 'Vehicle Color', 'Driver Name', 'Driver Address',
-       'Driver CSZ', 'Driver Phone', 'Owner Name', 'Co-Owner', 'Owner Address',
-       'Owner CSZ', 'Owner Phone'
-    ]]
-    export_csv = df.to_csv(name, index=False)
-
-
 def vehicle_desc():
     df = pd.read_csv("Output/Copy of 1999.csv")
     make = []
@@ -155,7 +139,7 @@ def vehicle_desc():
 
 
 def address():
-    df = pd.read_csv("Output v2/Copy of 2013 DATA.csv")
+    df = pd.read_csv("Output v2/Copy of 1999 DATA.csv")
     dvr = []
     dvr_addy = []
     dvr_city = []
@@ -200,12 +184,48 @@ def address():
     return df
 
 
+
+def export_excel(table, name):
+    if isinstance(table, pd.DataFrame):
+        df = table
+    else:
+        df = pd.DataFrame.from_dict(table, orient="index").transpose()
+
+    df = df[[
+        'Cite ID', 'Citation', 'Date', 'Plate', 'State', 'Full Name', 'First',
+       'Middle', 'Last', 'Violation', 'Amount', 'Status', 'Vehicle Make',
+       'Vehicle Model', 'Vehicle Color', 'Driver Name', 'Driver Address',
+       'Driver CSZ', 'Driver Phone', 'Owner Name', 'Co-Owner', 'Owner Address',
+       'Owner CSZ', 'Owner Phone'
+    ]]
+    export_csv = df.to_csv(name, index=False)
+
+
+def clean():
+    for i in range(14):
+        yr = "0{}".format(i) if i < 10 else i
+        input = "Output v3/Copy of 20{} DATA.csv".format(yr)
+        output = "Output v4/Copy of 20{} DATA.csv".format(yr)
+
+        csv = pd.read_csv(input)
+        for i in range(csv.shape[0]):
+            if not str(csv["Full Name"].iloc[i]) or str(csv["Full Name"].iloc[i]).lower() == "void" or str(csv["Status"].iloc[i]).lower() == "void" or not str(csv["Plate"].iloc[i]):
+                csv = csv.drop(index = i)
+
+        export_excel(csv, output)
+
 if __name__ == "__main__":
     # start = time.time()
     # export_excel(web(), "Copy of 1999.csv")
     # print("Time: {}".format(time.time()-start))
 
+    # start = time.time()
+    # export_excel(address(), "Output v3/Copy of 1999 DATA.csv")
+    # sec = time.time()-start
+
     start = time.time()
-    export_excel(address(), "Output v3/Copy of 2013 DATA.csv")
+    clean()
     sec = time.time()-start
+
+
     print("Time: {}".format(str(datetime.timedelta(seconds=sec))))

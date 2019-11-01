@@ -91,16 +91,17 @@ def new_user(driver, active, user, account, email, name, address):
 
 
 if __name__ == "__main__":
-    driver = login()
-    nav_user_registration(driver)
+    # driver = login()
+    # nav_user_registration(driver)
 
-    new_user(driver, True, 2, ["User", "Password"], "Email", ["Jaden", "Syre", "Smith"],
-             ["Address", "San Francisco", "Sasketchewan", "00000", "7777777777"])
+    # new_user(driver, True, 2, ["User", "Password"], "Email", ["Jaden", "Syre", "Smith"],
+    #          ["Address", "San Francisco", "Sasketchewan", "00000", "7777777777"])
 
     df = pd.read_csv("name-abbr.csv", names=["State", "Abbr"], header=None)
-    states = {}
-    for i in range(df.shape[0]):
-        states[df.iloc[i, 0]] = df.iloc[i, 1]
+    # states = {}
+    # for i in range(df.shape[0]):
+    #     states[df.iloc[i, 0]] = df.iloc[i, 1]
+    print(df["Abbr"].iloc[2])
 
 
 # TODO:
