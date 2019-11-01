@@ -202,15 +202,21 @@ def export_excel(table, name):
 
 
 def clean():
-    for i in range(14):
+    for i in range(1):
         yr = "0{}".format(i) if i < 10 else i
         input = "Output v3/Copy of 20{} DATA.csv".format(yr)
         output = "Output v4/Copy of 20{} DATA.csv".format(yr)
 
         csv = pd.read_csv(input)
-        for i in range(csv.shape[0]):
+        dank = csv.shape[0]
+        for i in range(dank):
+            # print(csv["Full Name"].iloc[i])
+            # print(csv["Status"].iloc[i])
+            # print(csv["Plate"].iloc[i])
             if not str(csv["Full Name"].iloc[i]) or str(csv["Full Name"].iloc[i]).lower() == "void" or str(csv["Status"].iloc[i]).lower() == "void" or not str(csv["Plate"].iloc[i]):
                 csv = csv.drop(index = i)
+                i = i - 1
+                dank = dank - 1
 
         export_excel(csv, output)
 
