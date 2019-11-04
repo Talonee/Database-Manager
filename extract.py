@@ -1,10 +1,9 @@
-from bs4 import BeautifulSoup as bs  # webscrape
-import requests  # websites
-import pandas as pd  # excel sheets
-import time
-import datetime
+from bs4 import BeautifulSoup as bs  # webscrape html codes
+import requests  # requests websites' html codes
+import pandas as pd  # dataframes and export
+import time # measure run speed
 
-
+# Retrieve data for cite ID, citation number, date, plate, full name, and status
 def database():
     with open("Years/citemgr_1999.html", buffering=(2 << 16) + 8) as f:
         soup = bs(f.read(), "html.parser")
@@ -73,7 +72,7 @@ def database():
 
     return cite_id, citation, date, plate, full_name, first, middle, last, status
 
-
+# Retrieve data for state, amount, and violation.
 def web():
     sheet = {}
     sheet["Cite ID"], sheet["Citation"], sheet["Date"], sheet["Plate"], sheet[
@@ -82,7 +81,7 @@ def web():
     sheet["Violation"] = []
     sheet["Amount"] = []
 
-    for id in sheet["Cite ID"]:  # State, amount, violation (web)
+    for id in sheet["Cite ID"]: 
         url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(
             id)
         page = requests.get(url)
@@ -112,7 +111,7 @@ def web():
 
     return sheet
 
-
+# Retrieve data for vehicle description
 def vehicle_desc():
     df = pd.read_csv("Output/Copy of 1999.csv")
     make = []
@@ -137,7 +136,7 @@ def vehicle_desc():
 
     return df
 
-
+# Retrieve data for driver and owner address
 def address():
     df = pd.read_csv("Output v2/Copy of 1999 DATA.csv")
     dvr = []
@@ -183,8 +182,7 @@ def address():
 
     return df
 
-
-
+# Export data into CSV files
 def export_excel(table, name):
     if isinstance(table, pd.DataFrame):
         df = table
@@ -200,7 +198,7 @@ def export_excel(table, name):
     ]]
     export_csv = df.to_csv(name, index=False)
 
-
+# Clean data of VOID values and blank entries
 def clean():
     for i in range(14):
         yr = "0{}".format(i) if i < 10 else i
@@ -219,18 +217,7 @@ def clean():
         export_excel(csv, output)
 
 if __name__ == "__main__":
-    # start = time.time()
-    # export_excel(web(), "Copy of 1999.csv")
-    # print("Time: {}".format(time.time()-start))
-
-    # start = time.time()
-    # export_excel(address(), "Output v3/Copy of 1999 DATA.csv")
-    # sec = time.time()-start
-
     start = time.time()
     clean()
     sec = time.time()-start
-
-
-
     print("Time: {}".format(str(datetime.timedelta(seconds=sec))))
