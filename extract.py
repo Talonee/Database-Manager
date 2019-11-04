@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup as bs  # webscrape html codes
 import requests  # requests websites' html codes
 import pandas as pd  # dataframes and export
 import time # measure run speed
+import datetime # support time
 
 # Retrieve data for cite ID, citation number, date, plate, full name, and status
 def database():
