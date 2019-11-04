@@ -202,7 +202,7 @@ def export_excel(table, name):
 
 
 def clean():
-    for i in range(1):
+    for i in range(14):
         yr = "0{}".format(i) if i < 10 else i
         input = "Output v3/Copy of 20{} DATA.csv".format(yr)
         output = "Output v4/Copy of 20{} DATA.csv".format(yr)
@@ -210,11 +210,9 @@ def clean():
         csv = pd.read_csv(input)
         i = 0
         while i < csv.shape[0]:
-            # print(csv["Full Name"].iloc[i])
-            # print(csv["Status"].iloc[i])
-            # print(csv["Plate"].iloc[i])
-            if not str(csv["Full Name"].iloc[i]) or str(csv["Full Name"].iloc[i]).lower() == "void" or str(csv["Status"].iloc[i]).lower() == "void" or not str(csv["Plate"].iloc[i]):
-                csv = csv.drop(index = i)
+            if pd.isna(csv["Full Name"].iloc[i]) or str(csv["Full Name"].iloc[i]) == "VOID" or str(csv["Status"].iloc[i]) == "VOID" or pd.isna(csv["Plate"].iloc[i]) or str(csv["Plate"].iloc[i]) == "VOID": 
+                csv.drop([i], axis=0, inplace = True)
+                csv.reset_index(drop = True, inplace = True)    
             else:
                 i = i + 1
 
@@ -232,6 +230,7 @@ if __name__ == "__main__":
     start = time.time()
     clean()
     sec = time.time()-start
+
 
 
     print("Time: {}".format(str(datetime.timedelta(seconds=sec))))
