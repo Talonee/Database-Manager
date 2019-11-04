@@ -210,7 +210,7 @@ def clean():
         csv = pd.read_csv(input)
         i = 0
         while i < csv.shape[0]:
-            if pd.isna(csv["Full Name"].iloc[i]) or str(csv["Full Name"].iloc[i]) == "VOID" or str(csv["Status"].iloc[i]) == "VOID" or pd.isna(csv["Plate"].iloc[i]) or str(csv["Plate"].iloc[i]) == "VOID": 
+            if pd.isna(csv["Full Name"].iloc[i]) or str(csv["Full Name"].iloc[i]).upper() == "VOID" or str(csv["Status"].iloc[i]).upper() == "VOID" or pd.isna(csv["Plate"].iloc[i]) or str(csv["Plate"].iloc[i]).upper() == "VOID": 
                 csv.drop([i], axis=0, inplace = True)
                 csv.reset_index(drop = True, inplace = True)    
             else:
