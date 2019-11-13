@@ -6,7 +6,7 @@ The project is currently **in progress** and is expected to have three (3) compo
 File: `extract.py`
 
 This program's purpose(s):
-* Webscrape through an old web database to retrieve raw data.
+* Web scrape through an old web database to retrieve raw data.
 * Clean, structure and enrich raw data into a desired format.
 * Export data into CSV files to be used in Excel.
 
@@ -17,7 +17,7 @@ This program's purpose(s):
 * Navigate web database by the interface.
 * Read CSV files and automate filling/transfer data into input fields.
 * Homogenize pre-exisiting user data.
-* Integrate both HTML parsing and web interaction.
+* Integrate both web scrape and web interaction.
 
 ## Analyze
 File: `analyze.py`
