@@ -1,7 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+from bs4 import BeautifulSoup as bs  # webscrape html codes
+import requests  # requests websites' html codes
 import pandas as pd
+import time
 
 
 def login():
@@ -25,20 +28,8 @@ def login():
 
 
 def nav_user_registration(driver):
-    # for i in range(5):
-
-    element = driver.find_element_by_xpath(
-        "/html/body/nav/div/div[2]/ul[1]/li[1]/a")
-    element.click()
-
-    ay = driver.find_element_by_xpath(
-        "/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[2]/a")
-    ay.click()
-
-    # driver.get('https://victorvalley.parkadmin.com/admin/start/main.aro')
-
-    # driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 't')
-    # driver.close()
+    driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/a").click()
+    driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[2]/a").click()
 
 
 def new_user(driver, active, user, account, email, name, address):
@@ -90,26 +81,96 @@ def new_user(driver, active, user, account, email, name, address):
     driver.find_element_by_id("tst_localPhoneNumber").send_keys(address[4])
 
 
+def nav_user_search(driver):
+    # navigate to user_search
+    driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/a").click()
+    driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[3]/a").click()
+
+    # code for field inputs here
+
+    # proceed to search
+    btn = driver.find_element_by_xpath("/html/body/div[1]/div/form/table/tbody/tr[8]/td/button")
+    btn.click()
+
+    # current_name(driver.current_url) # TODO
+    current_list(driver.current_url)
+
+def current_list(url): # IN PROGRESS
+    address = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[1]/td[5]").text
+    city = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[1]/td[6]").text
+
+    driver.execute_script("window.open('http://www.google.com/');") # open search tab
+    driver.switch_to.window(driver.window_handles[1]) # switch to search tab
+    search = driver.find_element_by_name('q')
+    search.send_keys("{} {}".format(address, city))
+    search.send_keys(Keys.RETURN)
+
+    rev_add = driver.find_element_by_class_name("desktop-title-content").text
+    rev_csz = driver.find_element_by_class_name("desktop-title-subcontent").text
+
+    driver.close()
+    driver.switch_to.window(driver.window_handles[0]) # switch back to first tab
+
+    user = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[1]/td[3]/a")
+    user.click()    
+
+    edit = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/div[1]/div[1]/a")
+    edit.click()
+
+    mail_address = driver.find_element_by_xpath("/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[14]/td/textarea")
+    mail_address.clear()
+    mail_address.send_keys(rev_add)
+
+    city = rev_csz.split(",")[0]
+    state = rev_csz.split(",")[0].split(" ")[0]
+    zipcode = rev_csz.split(",")[0].split(" ")[1]
+
+
+
+    print(rev_add, rev_csz)
+
 if __name__ == "__main__":
     # driver = login()
-    # nav_user_registration(driver)
 
+    # nav_user_search(driver)
+    # driver.close()
+
+    df = pd.read_csv("name-abbr.csv", names=["State", "Abbr"], header=None)
+    # print(df["Abbr"].iloc[2])
+    boy = df.loc[df['Abbr']=='CA'].index
+    print(df["State"].iloc[boy])
+
+    # nav_user_registration(driver)
     # new_user(driver, True, 2, ["User", "Password"], "Email", ["Jaden", "Syre", "Smith"],
     #          ["Address", "San Francisco", "Sasketchewan", "00000", "7777777777"])
 
-    df = pd.read_csv("name-abbr.csv", names=["State", "Abbr"], header=None)
-    # states = {}
-    # for i in range(df.shape[0]):
-    #     states[df.iloc[i, 0]] = df.iloc[i, 1]
-    print(df["Abbr"].iloc[2])
+    # driver = webdriver.Chrome()
+    # driver.get('https://python-forum.io/Thread-Need-Help-Opening-A-New-Tab-in-Selenium')
+    # # Open a new window
+    # # This does not change focus to the new window for the driver.
+    # driver.execute_script("window.open('http://www.google.com/');")
+    # time.sleep(3)
+    # # Switch to the new window
+    # driver.switch_to.window(driver.window_handles[1])
+    # driver.get("http://stackoverflow.com")
+    # time.sleep(3)
+    # # close the active tab
+    # driver.close()
+    # time.sleep(3)
+    # # Switch back to the first tab
+    # driver.switch_to.window(driver.window_handles[0])
+    # driver.get("http://google.se")
+    # time.sleep(3)
+    # # Close the only tab, will also close the browser.
+    # driver.close()
 
 
-# TODO:
-# Somehow gain access to SID/FID
-# Go through each person and register an account for them
-# Remove all void/empty entries
+
 
 '''
+# df = pd.read_csv("name-abbr.csv", names=["State", "Abbr"], header=None)
+# print(df["Abbr"].iloc[2])
+
 # class Entry:
     def __init__(self, citeid, citation, date, plate, state, full, first, mid, last, viol, amnt, status, make, model, color):
         self.citeid = citeid
