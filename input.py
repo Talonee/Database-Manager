@@ -6,6 +6,7 @@ import requests  # requests websites' html codes
 import pandas as pd
 import time
 
+USERNAMES = []
 
 def login():
     driver = webdriver.Chrome()
@@ -81,96 +82,144 @@ def new_user(driver, active, user, account, email, name, address):
     driver.find_element_by_id("tst_localPhoneNumber").send_keys(address[4])
 
 
-def nav_user_search(driver):
-    # navigate to user_search
+def nav_user_search():
+    # Navigate to user_search
     driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/a").click()
     driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[3]/a").click()
 
-    # code for field inputs here
+    # Enter specification into input fields and limit search data here.
+    # Default is empty because we want to see all users at once.
 
-    # proceed to search
+    # Proceed to search
     btn = driver.find_element_by_xpath("/html/body/div[1]/div/form/table/tbody/tr[8]/td/button")
     btn.click()
 
-    # current_name(driver.current_url) # TODO
-    current_list(driver.current_url)
+    # View number of users currently presented
+    rows_count = driver.execute_script("return document.getElementsByTagName('tr').length") - 8
+    
+    # Since some users relocate after being edited, 
+    # this loop ensures all entries are properly considered
+    i = 1
+    # while i <= rows_count:
+    while i <= 5:
+        # Edit user at current iteration and retrieve username
+        curr_name = curr_user(i) 
+        driver.refresh() # Refresh webpage
 
-def current_list(url): # IN PROGRESS
-    address = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[1]/td[5]").text
-    city = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[1]/td[6]").text
+        # Extract username at same iteration
+        curr_iter = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)).text
+        
+        # If both usernames match, user did not relocate, new iteration
+        if curr_name == curr_iter:
+            i += 1
+        
+        print(curr_name, curr_iter)
+        # Else if usernames do not match, rerun same iteration
 
-    driver.execute_script("window.open('http://www.google.com/');") # open search tab
-    driver.switch_to.window(driver.window_handles[1]) # switch to search tab
-    search = driver.find_element_by_name('q')
-    search.send_keys("{} {}".format(address, city))
-    search.send_keys(Keys.RETURN)
-
-    rev_add = driver.find_element_by_class_name("desktop-title-content").text
-    rev_csz = driver.find_element_by_class_name("desktop-title-subcontent").text
-
-    driver.close()
-    driver.switch_to.window(driver.window_handles[0]) # switch back to first tab
-
-    user = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[1]/td[3]/a")
-    user.click()    
-
-    edit = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/div[1]/div[1]/a")
-    edit.click()
-
-    mail_address = driver.find_element_by_xpath("/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[14]/td/textarea")
-    mail_address.clear()
-    mail_address.send_keys(rev_add)
-
-    city = rev_csz.split(",")[0]
-    state = rev_csz.split(",")[0].split(" ")[0]
-    zipcode = rev_csz.split(",")[0].split(" ")[1]
+# UNKNOWN ERROR TO BE SOLVED, NAMES DO NOT UPDATE UPON THIRD ITERATION
 
 
+def curr_user(i): # IN PROGRESS
+    username = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)).text
+    
+    if username not in USERNAMES: # Check if user is already edited
+        df = pd.read_csv("name-abbr.csv", names=["State", "Abbr"], header=None, index_col=0)
+        USERNAMES.append(username)
 
-    print(rev_add, rev_csz)
+        address = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[5]".format(i)).text
+        city = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[6]".format(i)).text
+
+        # Open and switch to a new search tab
+        driver.execute_script("window.open('http://www.google.com/');")
+        driver.switch_to.window(driver.window_handles[1])
+        search = driver.find_element_by_name('q')
+        search.send_keys("{} {}".format(address, city))
+        search.send_keys(Keys.RETURN)
+
+        # Extract and revise address information
+        rev_add = driver.find_element_by_class_name("desktop-title-content").text
+        rev_csz = driver.find_element_by_class_name("desktop-title-subcontent").text
+        city = rev_csz.split(", ")[0]
+        state = df.index[df['Abbr'] == (rev_csz.split(", ")[1].split(" ")[0])][0]
+        zipcode = rev_csz.split(", ")[1].split(" ")[1]
+
+        # Close search tab and switch back to the original tab
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+
+        # Access and edit user page
+        path = "/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)
+        user_url = driver.find_element_by_xpath(path).get_attribute("href")
+        driver.execute_script("window.open('{}');".format(user_url))
+        driver.switch_to.window(driver.window_handles[1])
+        edit = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/div[1]/div[1]/a")
+        edit.click()
+
+        # Check for name validity (title case with no trailing spaces)
+        name = data_valid("/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[10]/td/input")
+        mid = data_valid("/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[11]/td/input")
+        last = data_valid("/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[12]/td/input")
+
+        # Enter user data into input fields
+        enter_field(name, "/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[10]/td/input")
+        enter_field(mid, "/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[11]/td/input")
+        enter_field(last, "/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[12]/td/input")
+        enter_field(rev_add, "/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[14]/td/textarea")
+        enter_field(city, "/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[15]/td/input")
+        enter_field(state, "/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[16]/td[2]/select")
+        enter_field(zipcode, "/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[17]/td/input")
+        time.sleep(2)
+
+        # Submit and confirm changes
+        submit = driver.find_element_by_xpath("/html/body/div[1]/form/table/tbody/tr[2]/td/p/input[1]")
+        driver.execute_script("arguments[0].click();", submit)
+        confirm = driver.find_element_by_xpath("/html/body/div[1]/table/tbody/tr[3]/td/form/input[43]")
+        driver.execute_script("arguments[0].click();", confirm)
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+        time.sleep(2)
+
+    return username
+
+# Checks for data validity (title case with no trailing spaces)
+def data_valid(path):
+    try:
+        data = driver.find_element_by_xpath(path).get_attribute("value").strip()
+        return data.title() if len(data) > 2 and data != data.title() else data
+    except:
+        return ""
+
+# Clear pre-existing input fields and insert new data
+def enter_field(entry, path):
+    field = driver.find_element_by_xpath(path)
+    try:
+        field.clear()
+    except:
+        pass
+    field.send_keys(entry)
+
+
+# TODO:
+# put all existing username into a list IN SEPERATE TEXT FILE,
+# Read that file into a list, THEN decide if you need to edit that user
+
+# Try except the google address, if not found, quit asap
+
 
 if __name__ == "__main__":
-    # driver = login()
+    driver = login()
+    nav_user_search()
+    driver.close()
 
-    # nav_user_search(driver)
-    # driver.close()
-
-    df = pd.read_csv("name-abbr.csv", names=["State", "Abbr"], header=None)
-    # print(df["Abbr"].iloc[2])
-    boy = df.loc[df['Abbr']=='CA'].index
-    print(df["State"].iloc[boy])
 
     # nav_user_registration(driver)
     # new_user(driver, True, 2, ["User", "Password"], "Email", ["Jaden", "Syre", "Smith"],
     #          ["Address", "San Francisco", "Sasketchewan", "00000", "7777777777"])
 
-    # driver = webdriver.Chrome()
-    # driver.get('https://python-forum.io/Thread-Need-Help-Opening-A-New-Tab-in-Selenium')
-    # # Open a new window
-    # # This does not change focus to the new window for the driver.
-    # driver.execute_script("window.open('http://www.google.com/');")
-    # time.sleep(3)
-    # # Switch to the new window
-    # driver.switch_to.window(driver.window_handles[1])
-    # driver.get("http://stackoverflow.com")
-    # time.sleep(3)
-    # # close the active tab
-    # driver.close()
-    # time.sleep(3)
-    # # Switch back to the first tab
-    # driver.switch_to.window(driver.window_handles[0])
-    # driver.get("http://google.se")
-    # time.sleep(3)
-    # # Close the only tab, will also close the browser.
-    # driver.close()
-
 
 
 
 '''
-# df = pd.read_csv("name-abbr.csv", names=["State", "Abbr"], header=None)
-# print(df["Abbr"].iloc[2])
-
 # class Entry:
     def __init__(self, citeid, citation, date, plate, state, full, first, mid, last, viol, amnt, status, make, model, color):
         self.citeid = citeid
