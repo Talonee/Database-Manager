@@ -23,7 +23,7 @@ These programs' purpose(s):
 File: `input.py`
 
 This program's purpose(s):
-* Navigate web database by the interface.
+* Navigate web database by web interaction.
 * Read CSV files and automate filling/transfer data into input fields.
 * Homogenize pre-exisiting user data.
 * Integrate both web scrape and web interaction.
