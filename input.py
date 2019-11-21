@@ -84,15 +84,14 @@ def new_user(driver, active, user, account, email, name, address):
 
 def nav_user_search():
     # Navigate to user_search
-    driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/a").click()
-    driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[3]/a").click()
+    click("/html/body/nav/div/div[2]/ul[1]/li[1]/a")
+    click("/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[3]/a")
 
     # Enter specification into input fields and limit search data here.
     # Default is empty because we want to see all users at once.
 
     # Proceed to search
-    btn = driver.find_element_by_xpath("/html/body/div[1]/div/form/table/tbody/tr[8]/td/button")
-    btn.click()
+    click("/html/body/div[1]/div/form/table/tbody/tr[8]/td/button")
 
     # View number of users currently presented
     rows_count = driver.execute_script("return document.getElementsByTagName('tr').length") - 8
@@ -152,8 +151,7 @@ def curr_user(i): # IN PROGRESS
         user_url = driver.find_element_by_xpath(path).get_attribute("href")
         driver.execute_script("window.open('{}');".format(user_url))
         driver.switch_to.window(driver.window_handles[1])
-        edit = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/div[1]/div[1]/a")
-        edit.click()
+        click("/html/body/div[1]/div/div[1]/div[1]/div[1]/a")
 
         # Check for name validity (title case with no trailing spaces)
         name = data_valid("/html/body/div[1]/form/table/tbody/tr[2]/td/table/tbody[1]/tr[10]/td/input")
@@ -173,13 +171,21 @@ def curr_user(i): # IN PROGRESS
         # Submit and confirm changes
         submit = driver.find_element_by_xpath("/html/body/div[1]/form/table/tbody/tr[2]/td/p/input[1]")
         driver.execute_script("arguments[0].click();", submit)
+        time.sleep(2)
         confirm = driver.find_element_by_xpath("/html/body/div[1]/table/tbody/tr[3]/td/form/input[43]")
         driver.execute_script("arguments[0].click();", confirm)
+        time.sleep(2)
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
         time.sleep(2)
 
     return username
+
+# Click the given xpath element
+def click(path):
+    link = driver.find_element_by_xpath(path)
+    driver.execute_script("arguments[0].click();", link)
+    time.sleep(0.5)
 
 # Checks for data validity (title case with no trailing spaces)
 def data_valid(path):

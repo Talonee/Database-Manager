@@ -217,8 +217,16 @@ def clean():
 
         export_excel(csv, output)
 
+# Scramble all entry data to remain anomity
+
 if __name__ == "__main__":
-    start = time.time()
-    clean()
-    sec = time.time()-start
-    print("Time: {}".format(str(datetime.timedelta(seconds=sec))))
+    # start = time.time()
+    # clean()
+    # sec = time.time()-start
+    # print("Time: {}".format(str(datetime.timedelta(seconds=sec))))
+
+    from cryptography.fernet import Fernet
+    key = Fernet.generate_key() #this is your "password"
+    cipher_suite = Fernet(key)
+    encoded_text = cipher_suite.encrypt(b"Hello stackoverflow!")
+    decoded_text = cipher_suite.decrypt(encoded_text)
