@@ -3,7 +3,7 @@
 The project is currently **in progress** and is expected to have four (4) components, each performing separate functions: extract, encode + decode, input, and analyze.
 
 ## Extract 
-File: `extract.py` *(Complete)*
+File: `extract.py` *(Completed)*
 
 This program's purpose(s):
 * Web scrape through an old web database to retrieve raw data.
@@ -11,7 +11,7 @@ This program's purpose(s):
 * Export data into CSV files to be used in Excel.
 
 ## Encode + decode
-File: `encode.py + decode.py`  *(Complete)*
+File: `encode.py + decode.py`  *(Completed)*
 
 These programs' purpose(s):
 * Encode output retrieved from **Extract**.
