@@ -13,7 +13,7 @@ This program's purpose(s):
 ## Encode + decode
 File: `encode.py + decode.py`  *(Complete)*
 
-These programs' purpose(s): *(Complete)*
+These programs' purpose(s):
 * Encode output retrieved from **Extract**.
 * Decode output retrieved from **Encode**. (*decode.py is hidden*)
 
