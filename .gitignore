@@ -2,4 +2,4 @@ login.txt
 chromedriver.exe
 decode.py
 
-*.html
+Years/*.html
