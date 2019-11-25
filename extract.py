@@ -6,8 +6,6 @@ import datetime  # support time
 from encode import encode as ec # encode output
 
 # Retrieve data for cite ID, citation number, date, plate, full name, and status
-
-
 def database():
     with open("Years/citemgr_1999.html", buffering=(2 << 16) + 8) as f:
         soup = bs(f.read(), "html.parser")
@@ -77,8 +75,6 @@ def database():
     return cite_id, citation, date, plate, full_name, first, middle, last, status
 
 # Retrieve data for state, amount, and violation.
-
-
 def web():
     sheet = {}
     sheet["Cite ID"], sheet["Citation"], sheet["Date"], sheet["Plate"], sheet[
@@ -118,8 +114,6 @@ def web():
     return sheet
 
 # Retrieve data for vehicle description
-
-
 def vehicle_desc():
     df = pd.read_csv("Output/Copy of 1999.csv")
     make = []
@@ -145,8 +139,6 @@ def vehicle_desc():
     return df
 
 # Retrieve data for driver and owner address
-
-
 def address():
     df = pd.read_csv("Output v2/Copy of 1999 DATA.csv")
     dvr = []
@@ -194,8 +186,6 @@ def address():
     return df
 
 # Export data into CSV files
-
-
 def export_excel(table, name):
     if isinstance(table, pd.DataFrame):
         df = table
@@ -212,8 +202,6 @@ def export_excel(table, name):
     export_csv = df.to_csv(name, index=False)
 
 # Clean data of VOID values and blank entries
-
-
 def clean():
     for i in range(14):
         yr = "0{}".format(i) if i < 10 else i
@@ -230,7 +218,7 @@ def clean():
 
         export_excel(csv, output)
 
-
+# Encode and anonymize output data
 def anon():
 
     for i in range(14):
