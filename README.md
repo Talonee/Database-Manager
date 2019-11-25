@@ -5,7 +5,7 @@ The project is currently **in progress** and is expected to have four (4) compon
 ## Extract 
 File: `extract.py` 
 
-This program's purpose(s):
+This program's purpose(s): *(Complete)*
 * Web scrape through an old web database to retrieve raw data.
 * Clean, structure and enrich raw data into a desired format.
 * Export data into CSV files to be used in Excel.
@@ -15,7 +15,7 @@ File: `encode.py + decode.py`
 
 
 
-These programs' purpose(s):
+These programs' purpose(s): *(Complete)*
 * Encode output retrieved from **Extract**.
 * Decode output retrieved from **Encode**. (*decode.py is hidden*)
 
