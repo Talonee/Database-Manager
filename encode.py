@@ -54,7 +54,7 @@ def encode(content):
     return res
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # code = encode("Corcuera")
     # print("Encode: {}\nDecode: {}\n".format(code, decode(code)))
     # code = encode("12020 Caballero Street, Victorville CA 92395")

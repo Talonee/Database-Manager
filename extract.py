@@ -3,6 +3,8 @@ import requests  # requests websites' html codes
 import pandas as pd  # dataframes and export
 import time # measure run speed
 import datetime # support time
+from encode import encode as ec
+from decode import decode as dc
 
 # Retrieve data for cite ID, citation number, date, plate, full name, and status
 def database():
@@ -217,16 +219,20 @@ def clean():
 
         export_excel(csv, output)
 
-# Scramble all entry data to remain anomity
+def anon():
+    input = "Output/Copy of 20{} DATA.csv".format(13)
+    csv = pd.read_csv(input)
+    print(csv["Full Name"].head())
+    csv["Full Name"] = list(map(ec, csv["Full Name"]))
+    print("\n\n\n")
+    print(csv["Full Name"].head())
+    print("\n\n---------------------------\n")
+    csv["Full Name"] = list(map(dc, csv["Full Name"]))
+    print(csv["Full Name"].head())
 
 if __name__ == "__main__":
     # start = time.time()
     # clean()
     # sec = time.time()-start
     # print("Time: {}".format(str(datetime.timedelta(seconds=sec))))
-
-    from cryptography.fernet import Fernet
-    key = Fernet.generate_key() #this is your "password"
-    cipher_suite = Fernet(key)
-    encoded_text = cipher_suite.encrypt(b"Hello stackoverflow!")
-    decoded_text = cipher_suite.decrypt(encoded_text)
+    anon()
