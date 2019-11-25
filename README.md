@@ -1,8 +1,8 @@
 # Database-Webscrape
 
-The project is currently **in progress** and is expected to have three (4) components, each performing separate functions: extract, encode + decode, input, and analyze.
+The project is currently **in progress** and is expected to have four (4) components, each performing separate functions: extract, encode + decode, input, and analyze.
 
-## Extract 
+## Extract (Complete)
 File: `extract.py`
 
 This program's purpose(s):
@@ -10,7 +10,7 @@ This program's purpose(s):
 * Clean, structure and enrich raw data into a desired format.
 * Export data into CSV files to be used in Excel.
 
-## Encode + decode 
+## Encode + decode (Complete)
 File: `encode.py + decode.py` 
 
 
@@ -19,7 +19,7 @@ These programs' purpose(s):
 * Encode output retrieved from **Extract**.
 * Decode output retrieved from **Encode**. (*decode.py is hidden*)
 
-## Input
+## Input (In progress)
 File: `input.py`
 
 This program's purpose(s):
@@ -28,7 +28,7 @@ This program's purpose(s):
 * Homogenize pre-exisiting user data.
 * Integrate both web scrape and web interaction.
 
-## Analyze
+## Analyze (Null)
 File: `analyze.py`
 
 This program's purpose(s):
