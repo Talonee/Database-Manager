@@ -5,7 +5,7 @@ def encode(content):
     leet = {"o": "0", "l": "1", "z": "2", "e": "3", "a": "4",
             "s": "5", "g": "6", "t": "7", "b": "8", "j": "9"}
 
-    content = content.split(" ")
+    content = str(content).split(" ")
 
     def func(item):
         res = ""
