@@ -57,7 +57,7 @@ def encode(content):
 # if __name__ == "__main__":
     # code = encode("Corcuera")
     # print("Encode: {}\nDecode: {}\n".format(code, decode(code)))
-    # code = encode("12020 Caballero Street, Victorville CA 92395")
+    # code = encode("12020 Caballero Street, Dopey MA 98295")
     # print("Encode: {}\nDecode: {}\n".format(code, decode(code)))
     # code = encode("Plate 5JXK123")
     # print("Encode: {}\nDecode: {}\n".format(code, decode(code)))
