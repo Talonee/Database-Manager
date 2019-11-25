@@ -122,7 +122,7 @@ def curr_user(i): # IN PROGRESS
     username = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)).text
     
     if username not in USERNAMES: # Check if user is already edited
-        df = pd.read_csv("name-abbr.csv", names=["State", "Abbr"], header=None, index_col=0)
+        df = pd.read_csv("Work files/name-abbr.csv", names=["State", "Abbr"], header=None, index_col=0)
         USERNAMES.append(username)
 
         address = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[5]".format(i)).text
