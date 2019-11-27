@@ -8,9 +8,9 @@ File: `extract.py` *(Completed)*
 This program's purpose(s):
 * Web scrape through an old web database to retrieve raw data.
 * Clean, structure and enrich raw data into a desired format.
-* Export data into CSV files to be used in Excel.
+* Export data into CSV files to be used in other programs.
 
-## Encode + decode
+## Encode + Decode
 File: `encode.py + decode.py`  *(Completed)*
 
 These programs' purpose(s):
@@ -18,12 +18,12 @@ These programs' purpose(s):
 * Decode output retrieved from **Encode**. (*decode.py is hidden*)
 
 ## Input
-File: `input.py` *(In Progress)*
+File: `input.py` *(Completed)*
 
 This program's purpose(s):
 * Navigate web database by web interaction.
-* Read CSV files and automate filling/transfer data into input fields.
-* Homogenize pre-exisiting user data.
+* Read CSV files and automate filling/transferring data.
+* Homogenize/Clean pre-exisiting data.
 * Integrate both web scrape and web interaction.
 
 ## Analyze
