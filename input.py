@@ -111,7 +111,7 @@ def nav_user_search():
         # Since some users relocate after being edited, 
         # this loop ensures all entries are properly considered
         i = 1
-        while i <= 30:
+        while i <= rows_count:
             # Find username at current iteration
             username = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)).text
             if username in names or username + " - invalid address" in names:
@@ -236,7 +236,7 @@ def click(path):
 def data_valid(path):
     try:
         data = driver.find_element_by_xpath(path).get_attribute("value").strip()
-        return data.title() if len(data) > 2 and data != data.title() else data
+        return data.title() if len(data) > 2 and data != data.title() else data.upper()
     except:
         return ""
 
