@@ -1,4 +1,4 @@
-# Database-Webscrape
+# Database-Manager
 
 The project is currently **in progress** and is expected to have four (4) components, each performing separate functions: extract, encode + decode, input, and analyze.
 
