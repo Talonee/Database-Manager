@@ -2,13 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-from bs4 import BeautifulSoup as bs  # webscrape html codes
-import requests  # requests websites' html codes
 import pandas as pd
 import time
 
-USERNAMES = []
-
+# Login database with credentials
 def login():
     driver = webdriver.Chrome()
     driver.get('https://victorvalley.parkadmin.com/admin/start/login.aro')
@@ -28,12 +25,12 @@ def login():
 
     return driver
 
-
+# Navigate to User Registration category
 def nav_user_registration(driver):
-    driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/a").click()
-    driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[2]/a").click()
+    click("/html/body/nav/div/div[2]/ul[1]/li[1]/a")
+    click("/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[2]/a")
 
-
+# Register new users
 def new_entry(driver, active, user, account, email, name, address):
     # Active status
     if active:
@@ -82,7 +79,7 @@ def new_entry(driver, active, user, account, email, name, address):
     driver.find_element_by_id("tst_postalCode").send_keys(address[3])
     driver.find_element_by_id("tst_localPhoneNumber").send_keys(address[4])
 
-
+# Navigate to User Search category and proceed to edit
 def nav_user_search():
     # Navigate to User Search panel
     click("/html/body/nav/div/div[2]/ul[1]/li[1]/a")
@@ -106,13 +103,13 @@ def nav_user_search():
         time.sleep(2)
         print(page)
         # View number of users currently presented
-        rows_count = driver.execute_script("return document.getElementsByTagName('tr').length") - 9
+        num_users = driver.execute_script("return document.getElementsByTagName('tr').length") - 9
     
         # Since some users relocate after being edited, 
         # this loop ensures all entries are properly considered
         i = 1
-        while i <= rows_count:
-            # Find username at current iteration
+        while i <= num_users:
+            # Find and edit users
             username = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)).text
             if username in names or username + " - invalid address" in names:
                 i += 1
@@ -131,7 +128,7 @@ def nav_user_search():
         new_users = []
         page += 1
     
-
+# Permission to access preexisting list of usernames
 def storage_response():
     print("Would you like to read in existing user names? y/n")
     response = "y"
@@ -144,7 +141,8 @@ def storage_response():
 
     return names, response
 
-def edit_user(i, username, names): # IN PROGRESS
+# Edit user profile
+def edit_user(i, username, names):
     df = pd.read_csv("Work files/name-abbr.csv", names=["State", "Abbr"], header=None, index_col=0)
 
     address = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[5]".format(i)).text
@@ -157,7 +155,7 @@ def edit_user(i, username, names): # IN PROGRESS
     search.send_keys("{} {}".format(address, city))
     search.send_keys(Keys.RETURN)
 
-    # run iff Mr. Google returns a valid address
+    # Run iff Mr. Google returns a valid address
     try: 
         # Extract and revise address information
         rev_add = driver.find_element_by_class_name("desktop-title-content").text
@@ -236,7 +234,7 @@ def click(path):
 def data_valid(path):
     try:
         data = driver.find_element_by_xpath(path).get_attribute("value").strip()
-        return data.title() if len(data) > 2 and data != data.title() else data.upper()
+        return data.title() if len(data) > 2 and data != data.title() else data
     except:
         return ""
 
@@ -250,53 +248,13 @@ def enter_field(entry, path):
     field.send_keys(entry)
 
 
-# TODO:
-# put all existing username into a list IN SEPERATE TEXT FILE,
-# Read that file into a list, THEN decide if you need to edit that user
-
-
-
 if __name__ == "__main__":
     driver = login()
     nav_user_search()
-    # driver.quit()
-
-    # names = ["zeze", "on goyd", "fraud", "auuuuu", "blew the coug"]
-    # store_users(names)
-    # dank = read_users()
+    driver.quit()
 
     # nav_user_registration(driver)
     # new_user(driver, True, 2, ["User", "Password"], "Email", ["Jaden", "Syre", "Smith"],
     #          ["Address", "San Francisco", "Sasketchewan", "00000", "7777777777"])
 
 
-
-
-'''
-# class Entry:
-    def __init__(self, citeid, citation, date, plate, state, full, first, mid, last, viol, amnt, status, make, model, color):
-        self.citeid = citeid
-        self.citation = citation
-        self.date = date
-        self.plate = plate
-        self.state = state
-        self.full = full
-        self.first = first
-        self.mid = mid
-        self.last = last
-        self.viol = viol
-        self.amnt = amnt
-        self.status = status
-        self.make = make
-        self.model = model
-        self.color = color
-        self.dvr = dvr
-        self.dvr_addy = dvr_addy
-        self.dvr_city = dvr_city
-        self.dvr_fone = dvr_fone
-        self.own = own
-        self.coown = coown
-        self.own_addy = own_addy
-        self.own_city = own_city
-        self.own_fone = own_fone
-'''
