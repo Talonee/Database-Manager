@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup as bs  # webscrape html codes
@@ -33,7 +34,7 @@ def nav_user_registration(driver):
     driver.find_element_by_xpath("/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[2]/a").click()
 
 
-def new_user(driver, active, user, account, email, name, address):
+def new_entry(driver, active, user, account, email, name, address):
     # Active status
     if active:
         driver.find_element_by_xpath(
@@ -83,58 +84,81 @@ def new_user(driver, active, user, account, email, name, address):
 
 
 def nav_user_search():
-    # Navigate to user_search
+    # Navigate to User Search panel
     click("/html/body/nav/div/div[2]/ul[1]/li[1]/a")
     click("/html/body/nav/div/div[2]/ul[1]/li[1]/ul/li[3]/a")
 
-    # Enter specification into input fields and limit search data here.
-    # Default is empty because we want to see all users at once.
+    # Input specification and limit search data here.
+    # Currently empty because this program wants to see all users at once.
 
     # Proceed to search
     click("/html/body/div[1]/div/form/table/tbody/tr[8]/td/button")
 
-    # View number of users currently presented
-    rows_count = driver.execute_script("return document.getElementsByTagName('tr').length") - 8
+    new_users = []
+    names, response = storage_response()
     
-    # Since some users relocate after being edited, 
-    # this loop ensures all entries are properly considered
-    i = 1
-    # while i <= rows_count:
-    while i <= 5:
-        # Edit user at current iteration and retrieve username
-        curr_name = curr_user(i) 
-        driver.refresh() # Refresh webpage
-
-        # Extract username at same iteration
-        curr_iter = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)).text
-        
-        # If both usernames match, user did not relocate, new iteration
-        if curr_name == curr_iter:
-            i += 1
-        
-        print(curr_name, curr_iter)
-        # Else if usernames do not match, rerun same iteration
-
-# UNKNOWN ERROR TO BE SOLVED, NAMES DO NOT UPDATE UPON THIRD ITERATION
-
-
-def curr_user(i): # IN PROGRESS
-    username = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)).text
+    select = Select(driver.find_element_by_name('userstart'))
+    page_count = len(select.options)
+    page = 1
+    while page <= page_count: # current pg# and tote# of options
+        select = Select(driver.find_element_by_name('userstart'))
+        select.select_by_value("{}".format(page))
+        time.sleep(2)
+        print(page)
+        # View number of users currently presented
+        rows_count = driver.execute_script("return document.getElementsByTagName('tr').length") - 9
     
-    if username not in USERNAMES: # Check if user is already edited
-        df = pd.read_csv("Work files/name-abbr.csv", names=["State", "Abbr"], header=None, index_col=0)
-        USERNAMES.append(username)
+        # Since some users relocate after being edited, 
+        # this loop ensures all entries are properly considered
+        i = 1
+        while i <= 30:
+            # Find username at current iteration
+            username = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)).text
+            if username in names or username + " - invalid address" in names:
+                i += 1
+            else:
+                curr_name = edit_user(i, username, names)
+                new_users.append(curr_name)
+                names.append(curr_name)
+            
+                driver.close()
+                driver.switch_to.window(driver.window_handles[0])
+                time.sleep(1)
+                driver.refresh() # Refresh webpage
 
-        address = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[5]".format(i)).text
-        city = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[6]".format(i)).text
+        # Reset existing usernames if response is no, else append
+        store_users(new_users, True) if response == "n" else store_users(new_users)
+        new_users = []
+        page += 1
+    
 
-        # Open and switch to a new search tab
-        driver.execute_script("window.open('http://www.google.com/');")
-        driver.switch_to.window(driver.window_handles[1])
-        search = driver.find_element_by_name('q')
-        search.send_keys("{} {}".format(address, city))
-        search.send_keys(Keys.RETURN)
+def storage_response():
+    print("Would you like to read in existing user names? y/n")
+    response = "y"
+    while response != "y" and response != "n":
+        print("Invalid response. Please respond with y/n")
+        response = input()
 
+    # Read existing usernames if response is yes, else nothing
+    names = read_users() if response == "y" else []
+
+    return names, response
+
+def edit_user(i, username, names): # IN PROGRESS
+    df = pd.read_csv("Work files/name-abbr.csv", names=["State", "Abbr"], header=None, index_col=0)
+
+    address = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[5]".format(i)).text
+    city = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[6]".format(i)).text
+
+    # Open Mr. Google and search address
+    driver.execute_script("window.open('http://www.google.com/');")
+    driver.switch_to.window(driver.window_handles[1])
+    search = driver.find_element_by_name('q')
+    search.send_keys("{} {}".format(address, city))
+    search.send_keys(Keys.RETURN)
+
+    # run iff Mr. Google returns a valid address
+    try: 
         # Extract and revise address information
         rev_add = driver.find_element_by_class_name("desktop-title-content").text
         rev_csz = driver.find_element_by_class_name("desktop-title-subcontent").text
@@ -147,6 +171,7 @@ def curr_user(i): # IN PROGRESS
         driver.switch_to.window(driver.window_handles[0])
 
         # Access and edit user page
+        print(username)
         path = "/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)
         user_url = driver.find_element_by_xpath(path).get_attribute("href")
         driver.execute_script("window.open('{}');".format(user_url))
@@ -169,25 +194,45 @@ def curr_user(i): # IN PROGRESS
         time.sleep(2)
 
         # Submit and confirm changes
-        submit = driver.find_element_by_xpath("/html/body/div[1]/form/table/tbody/tr[2]/td/p/input[1]")
-        driver.execute_script("arguments[0].click();", submit)
-        time.sleep(2)
-        confirm = driver.find_element_by_xpath("/html/body/div[1]/table/tbody/tr[3]/td/form/input[43]")
-        driver.execute_script("arguments[0].click();", confirm)
-        time.sleep(2)
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])
-        time.sleep(2)
+        click("/html/body/div[1]/form/table/tbody/tr[2]/td/p/input[1]")
+        click("//input[@value='Information Correct']")
+    except: # if no valid address found, return usernam as invalid address
+        return username + " - invalid address"
 
     return username
 
-# Click the given xpath element
+# Store usernames into storage file
+def store_users(names, reset=False):
+    if reset:
+        f = open("storage.txt", "w+")
+    else:
+        try:
+            f = open("storage.txt", "a+")
+        except:
+            f = open("storage.txt", "w+")
+    
+    for i in names:
+        f.write("{}\n".format(i))
+    f.close()
+
+# Read usernames from storage file
+def read_users():
+    res = []
+    try:
+        f = open("storage.txt", "r")    
+        [res.append(line.strip()) for line in f.readlines()]
+    except:
+        f = open("storage.txt", "x")    
+
+    return res
+
+# Click an xpath element
 def click(path):
     link = driver.find_element_by_xpath(path)
     driver.execute_script("arguments[0].click();", link)
     time.sleep(0.5)
 
-# Checks for data validity (title case with no trailing spaces)
+# Clean data (negate empty values, return title case)
 def data_valid(path):
     try:
         data = driver.find_element_by_xpath(path).get_attribute("value").strip()
@@ -195,7 +240,7 @@ def data_valid(path):
     except:
         return ""
 
-# Clear pre-existing input fields and insert new data
+# Clear input field and insert new data
 def enter_field(entry, path):
     field = driver.find_element_by_xpath(path)
     try:
@@ -209,14 +254,16 @@ def enter_field(entry, path):
 # put all existing username into a list IN SEPERATE TEXT FILE,
 # Read that file into a list, THEN decide if you need to edit that user
 
-# Try except the google address, if not found, quit asap
 
 
 if __name__ == "__main__":
     driver = login()
     nav_user_search()
-    driver.close()
+    # driver.quit()
 
+    # names = ["zeze", "on goyd", "fraud", "auuuuu", "blew the coug"]
+    # store_users(names)
+    # dank = read_users()
 
     # nav_user_registration(driver)
     # new_user(driver, True, 2, ["User", "Password"], "Email", ["Jaden", "Syre", "Smith"],
