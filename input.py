@@ -101,7 +101,7 @@ def nav_user_search():
         select = Select(driver.find_element_by_name('userstart'))
         select.select_by_value("{}".format(page))
         time.sleep(2)
-        print(page)
+        print("Current page: {}".format(page))
         # View number of users currently presented
         num_users = driver.execute_script("return document.getElementsByTagName('tr').length") - 9
     
@@ -111,7 +111,8 @@ def nav_user_search():
         while i <= num_users:
             # Find and edit users
             username = driver.find_element_by_xpath("/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)).text
-            if username in names or username + " - invalid address" in names:
+            if username in names or username + " - invalid address" in names: 
+            # if username in names: # iteration for invalid addresses
                 i += 1
             else:
                 curr_name = edit_user(i, username, names)
@@ -122,6 +123,7 @@ def nav_user_search():
                 driver.switch_to.window(driver.window_handles[0])
                 time.sleep(1)
                 driver.refresh() # Refresh webpage
+                i += 1 # iteration for invalid addresses
 
         # Reset existing usernames if response is no, else append
         store_users(new_users, True) if response == "n" else store_users(new_users)
@@ -154,6 +156,7 @@ def edit_user(i, username, names):
     search = driver.find_element_by_name('q')
     search.send_keys("{} {}".format(address, city))
     search.send_keys(Keys.RETURN)
+    time.sleep(1)
 
     # Run iff Mr. Google returns a valid address
     try: 
@@ -169,7 +172,7 @@ def edit_user(i, username, names):
         driver.switch_to.window(driver.window_handles[0])
 
         # Access and edit user page
-        print(username)
+        print("Editing user: {}".format(username))
         path = "/html/body/div[1]/div/div[1]/table/tbody/tr[{}]/td[3]/a".format(i)
         user_url = driver.find_element_by_xpath(path).get_attribute("href")
         driver.execute_script("window.open('{}');".format(user_url))
@@ -195,6 +198,7 @@ def edit_user(i, username, names):
         click("/html/body/div[1]/form/table/tbody/tr[2]/td/p/input[1]")
         click("//input[@value='Information Correct']")
     except: # if no valid address found, return usernam as invalid address
+        print("Username: {}\nAddress: {}, {}".format(username, address, city))
         return username + " - invalid address"
 
     return username
