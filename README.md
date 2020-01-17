@@ -33,3 +33,15 @@ This program's purpose(s):
 * Create graphs and models concerning data retrieved from **Extract**.
 * Determine various statistical information within the data.
 * Analyze and predict data trends.
+
+## Results
+With manual entry:
+`3 hrs/day * 4 days/wk * 4 wks/mo * 2 mo = 96 hrs/file * 14 files`
+--> **1344 hrs / 14 files**
+
+With Database Manager's automation:
+--> **16 hrs / 14 files**
+
+Efficiency calculation:
+100% - (16 / 1344 * 100)% = 99%
+--> **Database Manager is 99% more efficient than manual labor when it comes to time consumptions.**
