@@ -43,5 +43,5 @@ With Database Manager's automation:
 --> **16 hrs / 14 files**
 
 Efficiency calculation:
-100% - (16 / 1344 * 100)% = 99%
+`100% - (16 / 1344 * 100)% = 99%`
 --> **Database Manager is 99% more efficient than manual labor when it comes to time consumptions.**
