@@ -1,14 +1,38 @@
 from selenium import webdriver
-from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+from selenium.webdriver.firefox.options import Options
+
 import pandas as pd
 import time
 
 # Login database with credentials
 def login():
-    driver = webdriver.Chrome()
+    #### Google Chrome
+    # driver = webdriver.Chrome()
+    # driver.get('https://victorvalley.parkadmin.com/admin/start/login.aro')
+    
+    #### Firefox
+    binary = r'C:\Users\Talon.Pollard\AppData\Local\Mozilla Firefox\firefox.exe' # Work dir
+    # binary = r'C:\Program Files\Mozilla Firefox\firefox.exe' # Home dir
+    options = Options()
+    # options.set_headless(headless=True)
+    options.binary = binary
+
+    profile = webdriver.FirefoxProfile()
+    profile.set_preference("media.volume_scale", "0.0")
+
+    cap = DesiredCapabilities().FIREFOX
+    cap["marionette"] = True #optional
+
+    driver = webdriver.Firefox(firefox_profile=profile, options=options, capabilities=cap, executable_path="drivers/geckodriver.exe")
     driver.get('https://victorvalley.parkadmin.com/admin/start/login.aro')
+
     with open("login.txt") as f:
         f = f.read().splitlines()
         un = f[0]
@@ -251,12 +275,26 @@ def enter_field(entry, path):
         pass
     field.send_keys(entry)
 
+def nav_violation_entry():
+    click("/html/body/nav/div/div[2]/ul[1]/li[2]/a")
+    click("/html/body/nav/div/div[2]/ul[1]/li[2]/ul/li[2]/a")
+    time.sleep(1)
+    writer = driver.find_element(By.CSS_SELECTOR, 'select[name="writer"]')
+    writer.click()
+    select = Select(writer).options
+    for i.text in select:
+        if "talon" in i.lower():
+            # select
+            pass
+        # print(i.text)
+    time.sleep(5)
 
 if __name__ == "__main__":
     driver = login()
-    nav_user_search()
+    nav_violation_entry()
     driver.quit()
-
+    
+    # nav_user_search()
     # nav_user_registration(driver)
     # new_user(driver, True, 2, ["User", "Password"], "Email", ["Jaden", "Syre", "Smith"],
     #          ["Address", "San Francisco", "Sasketchewan", "00000", "7777777777"])

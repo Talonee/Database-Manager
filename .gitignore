@@ -1,5 +1,7 @@
 login.txt
 chromedriver.exe
+geckodriver.exe
+geckodriver.log
 decode.py
 debug.log
 Years/
