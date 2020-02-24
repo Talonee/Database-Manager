@@ -5,9 +5,9 @@ import time  # measure run speed
 import datetime  # support time
 from encode import encode as ec # encode output
 
-# Retrieve data for cite ID, citation number, date, plate, full name, and status
+# Retrieve cite ID, citation number, date, plate, full name, and status from downloaded HTML files.
 def database():
-    with open("Years/citemgr_1999.html", buffering=(2 << 16) + 8) as f:
+    with open("Years/citemgr_2016.html", buffering=(2 << 16) + 8) as f:
         soup = bs(f.read(), "html.parser")
         cite_id = []
         citation = []
@@ -74,46 +74,107 @@ def database():
 
     return cite_id, citation, date, plate, full_name, first, middle, last, status
 
-# Retrieve data for state, amount, and violation.
+# Retrieve state, amount, violation, vehicle_desc, and address from websites.
 def web():
-    sheet = {}
-    sheet["Cite ID"], sheet["Citation"], sheet["Date"], sheet["Plate"], sheet[
-        "Full Name"], sheet["First"], sheet["Middle"], sheet["Last"], sheet["Status"] = database()
-    sheet["State"] = []
-    sheet["Violation"] = []
-    sheet["Amount"] = []
+    df = {}
+    df["Cite ID"], df["Citation"], df["Date"], df["Plate"], df[
+        "Full Name"], df["First"], df["Middle"], df["Last"], df["Status"] = database()
 
-    for id in sheet["Cite ID"]:
+    state = []
+    violation = []
+    amount = []
+    make = []
+    model = []
+    color = []
+    dvr = []
+    dvr_addy = []
+    dvr_city = []
+    dvr_fone = []
+    own = []
+    coown = []
+    own_addy = []
+    own_city = []
+    own_fone = []
+
+    for id in df["Cite ID"]:
         url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(
             id)
         page = requests.get(url)
-        soup2 = bs(page.content, "html.parser")
+        soup = bs(page.content, "html.parser")
 
-        items = soup2.find('input', {'name': 'license_state'}).get('value')
-        sheet["State"].append(items)
+        # Vehicle make
+        make.append(soup.find('input', {'name': 'vehicle_make'}).get('value'))
 
-        num = sheet["Citation"][sheet["Cite ID"].index(id)]
+        # Vehicle model
+        model.append(soup.find(
+            'input', {'name': 'vehicle_model'}).get('value'))
+        
+        # Vehicle color
+        color.append(soup.find(
+            'input', {'name': 'vehicle_color'}).get('value'))
+
+        # State
+        items = soup.find('input', {'name': 'license_state'}).get('value')
+        state.append(items)
+
+        # Driver, owner, co-owner information
+        dvr.append(soup.find('input', {'name': 'driver_name'}).get('value'))
+        dvr_addy.append(soup.find(
+            'input', {'name': 'driver_addr'}).get('value'))
+        dvr_city.append(soup.find(
+            'input', {'name': 'driver_csz'}).get('value'))
+        dvr_fone.append(soup.find(
+            'input', {'name': 'driver_phone'}).get('value'))
+        own.append(soup.find('input', {'name': 'owner_name'}).get('value'))
+        coown.append(soup.find('input', {'name': 'owner_name2'}).get('value'))
+        own_addy.append(soup.find(
+            'input', {'name': 'owner_addr'}).get('value'))
+        own_city.append(soup.find(
+            'input', {'name': 'owner_csz'}).get('value'))
+        own_fone.append(soup.find(
+            'input', {'name': 'owner_phone'}).get('value'))
+
+        ####### Nav to new page for additional information
+        num = df["Citation"][df["Cite ID"].index(id)]
         url = "http://citemgr/citemgr/violation_trans_main.php?cite_array=&cite_sysid={}&cite_number={}".format(
             id, num)
         page = requests.get(url)
-        soup2 = bs(page.content, "html.parser")
+        soup = bs(page.content, "html.parser")
 
+        # Violation number
         num = []
         [
             num.append(i.get_text().split()[0][1:])
-            if "#" in i.get_text() else "" for i in soup2.find_all(
+            if "#" in i.get_text() else "" for i in soup.find_all(
                 "td", align="left", bgcolor="#eeeeee", class_="tblpcs")
         ]
-        sheet["Violation"].append("#" + ",".join(num))
+        violation.append("#" + ",".join(num))
 
-        amnt = soup2.find("td", class_="menuheader",
+        # Amount due
+        amnt = soup.find("td", class_="menuheader",
                           bgcolor="#8B6914").get_text()
         amnt_clean = "{}".format(amnt.split()[2])
-        sheet["Amount"].append(amnt_clean)
+        amount.append(amnt_clean)
 
-    return sheet
+    df["State"] = state
+    df["Violation"] = violation
+    df["Amount"] = amount
+    df["Vehicle Make"] = make
+    df["Vehicle Model"] = model
+    df["Vehicle Color"] = color
+    df["Driver Name"] = dvr
+    df["Driver Address"] = dvr_addy
+    df["Driver CSZ"] = dvr_city
+    df["Driver Phone"] = dvr_fone
+    df["Owner Name"] = own
+    df["Co-Owner"] = coown
+    df["Owner Address"] = own_addy
+    df["Owner CSZ"] = own_city
+    df["Owner Phone"] = own_fone
 
-# Retrieve data for vehicle description
+    return df
+
+# Retrieve vehicle description
 def vehicle_desc():
     df = pd.read_csv("Output/Copy of 1999.csv")
     make = []
@@ -124,12 +185,12 @@ def vehicle_desc():
         url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(
             i)
         page = requests.get(url)
-        soup2 = bs(page.content, "html.parser")
+        soup = bs(page.content, "html.parser")
 
-        make.append(soup2.find('input', {'name': 'vehicle_make'}).get('value'))
-        model.append(soup2.find(
+        make.append(soup.find('input', {'name': 'vehicle_make'}).get('value'))
+        model.append(soup.find(
             'input', {'name': 'vehicle_model'}).get('value'))
-        color.append(soup2.find(
+        color.append(soup.find(
             'input', {'name': 'vehicle_color'}).get('value'))
 
     df["Vehicle Make"] = make
@@ -138,7 +199,7 @@ def vehicle_desc():
 
     return df
 
-# Retrieve data for driver and owner address
+# Retrieve driver and owner address
 def address():
     df = pd.read_csv("Output v2/Copy of 1999 DATA.csv")
     dvr = []
@@ -155,22 +216,22 @@ def address():
         url = "http://citemgr/citemgr/cite_edit.php?cite_sysid={}&username=".format(
             i)
         page = requests.get(url)
-        soup2 = bs(page.content, "html.parser")
+        soup = bs(page.content, "html.parser")
 
-        dvr.append(soup2.find('input', {'name': 'driver_name'}).get('value'))
-        dvr_addy.append(soup2.find(
+        dvr.append(soup.find('input', {'name': 'driver_name'}).get('value'))
+        dvr_addy.append(soup.find(
             'input', {'name': 'driver_addr'}).get('value'))
-        dvr_city.append(soup2.find(
+        dvr_city.append(soup.find(
             'input', {'name': 'driver_csz'}).get('value'))
-        dvr_fone.append(soup2.find(
+        dvr_fone.append(soup.find(
             'input', {'name': 'driver_phone'}).get('value'))
-        own.append(soup2.find('input', {'name': 'owner_name'}).get('value'))
-        coown.append(soup2.find('input', {'name': 'owner_name2'}).get('value'))
-        own_addy.append(soup2.find(
+        own.append(soup.find('input', {'name': 'owner_name'}).get('value'))
+        coown.append(soup.find('input', {'name': 'owner_name2'}).get('value'))
+        own_addy.append(soup.find(
             'input', {'name': 'owner_addr'}).get('value'))
-        own_city.append(soup2.find(
+        own_city.append(soup.find(
             'input', {'name': 'owner_csz'}).get('value'))
-        own_fone.append(soup2.find(
+        own_fone.append(soup.find(
             'input', {'name': 'owner_phone'}).get('value'))
 
     df["Driver Name"] = dvr
@@ -185,8 +246,8 @@ def address():
 
     return df
 
-# Export data into CSV files
-def export_excel(table, name):
+# Export into CSV files
+def export_excel(table, output):
     if isinstance(table, pd.DataFrame):
         df = table
     else:
@@ -199,14 +260,15 @@ def export_excel(table, name):
         'Driver CSZ', 'Driver Phone', 'Owner Name', 'Co-Owner', 'Owner Address',
         'Owner CSZ', 'Owner Phone'
     ]]
-    export_csv = df.to_csv(name, index=False)
+    # df.to_csv("Tempo/Copy of 2016 DATA.csv", index=False)
+    df.to_csv(output, index=False)
 
-# Clean data of VOID values and blank entries
+# Clean VOID values and blank entries
 def clean():
-    for i in range(14):
+    for i in range(14, 17):
         yr = "0{}".format(i) if i < 10 else i
-        input = "Output v3/Copy of 20{} DATA.csv".format(yr)
-        output = "Output v4/Copy of 20{} DATA - ENCODED.csv".format(yr)
+        input = "Tempo/Copy of 20{} DATA.csv".format(yr)
+        output = "Output/Copy of 20{} DATA.csv".format(yr)
         csv = pd.read_csv(input)
         i = 0
         while i < csv.shape[0]:
@@ -218,9 +280,8 @@ def clean():
 
         export_excel(csv, output)
 
-# Encode and anonymize output data
+# Encode and anonymize file
 def anon():
-
     for i in range(14):
         yr = "0{}".format(i) if i < 10 else i
         input = "Output 1/Copy of 20{} DATA.csv".format(yr)
@@ -245,8 +306,17 @@ def anon():
 
 
 if __name__ == "__main__":
-    # start = time.time()
-    # clean()
+    start = time.time()
+
+    # to run a single year file
+    # df = web()
+    # export_excel(df)
+
+    # to clean file of void values
+    clean()
+
+    # to anonymize data
     # anon()
-    # sec = time.time()-start
-    # print("Time: {}".format(str(datetime.timedelta(seconds=sec))))
+
+    sec = time.time()-start
+    print("Time: {}".format(str(datetime.timedelta(seconds=sec))))

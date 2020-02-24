@@ -278,15 +278,45 @@ def enter_field(entry, path):
 def nav_violation_entry():
     click("/html/body/nav/div/div[2]/ul[1]/li[2]/a")
     click("/html/body/nav/div/div[2]/ul[1]/li[2]/ul/li[2]/a")
-    time.sleep(1)
-    writer = driver.find_element(By.CSS_SELECTOR, 'select[name="writer"]')
-    writer.click()
-    select = Select(writer).options
-    for i.text in select:
-        if "talon" in i.lower():
-            # select
-            pass
-        # print(i.text)
+    time.sleep(0.75)
+
+    # Select writer
+    writer = Select(driver.find_element(By.CSS_SELECTOR, 'select[name="writer"]'))
+    for i in writer.options:
+        if "noreen" in i.text.lower():
+            writer.select_by_visible_text(i.text)
+
+    # Select spoiled - This section is to be determined what spoiled means
+    # 0 - Valid - not spoiled
+    # 1 - Spoiled
+    # 2 - Drive Away
+    # 3 - TESTING
+    spoil = Select(driver.find_element(By.CSS_SELECTOR, 'select[name="SpoilID"]'))
+    for i in spoil.options:
+        if "testing" in i.text.lower():
+            spoil.select_by_visible_text(i.text)
+
+    # Ticket number
+    tix_no = driver.find_element(By.CSS_SELECTOR, 'input[name="ticket"]').send_keys("0000000")
+    
+    # Warning check
+    warning = False
+    if warning:
+        warn_btn = driver.find_element(By.CSS_SELECTOR, 'button[data-testid="btn_setAsWarning"]').click()
+
+    # Ticket type
+    tix_type = Select(driver.find_element(By.CSS_SELECTOR, 'select[name="TicketType"]'))
+    for i in tix_type.options:
+        if "Municipal":
+            tix_type.select_by_visible_text("Municipal")
+        else:
+            tix_type.select_by_visible_text("Private Property")
+
+
+    
+
+    
+
     time.sleep(5)
 
 if __name__ == "__main__":
